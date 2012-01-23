@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>{% block title %}GHOME Web{% endblock %}</title>
+        <link href="{{ asset('bundles/ghomecore/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
+        <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />
+    </head>
+    <body style="padding-top: 50px;">
+        <div class="topbar">
+            <div class="topbar-inner">
+                <div class="container">
+                    <h3><a href="{{ path('ghome_core_default_index') }}">GHOME Web</a></h3>
+                    <ul class="nav">
+                        <li class="active"><a href="{{ path('ghome_core_default_index') }}">Ma maison</a></li>
+                        <li><a href="#">Statistiques</a></li>
+                    </ul>
+                </div> <!-- /container -->
+            </div> <!-- /topbar-inner -->
+        </div> <!-- /topbar -->
+        
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+        
+        {% block javascripts %}{% endblock %}
+    </body>
+</html>

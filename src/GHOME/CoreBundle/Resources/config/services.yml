@@ -1,0 +1,4 @@
+services:
+    ghome_core.configuration_manager:
+        class: GHOME\CoreBundle\Configuration\ConfigurationManager
+        arguments: ['/Users/vincent/workspace/GHOME/etc']

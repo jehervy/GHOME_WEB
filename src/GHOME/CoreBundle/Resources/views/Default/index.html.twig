@@ -1,0 +1,40 @@
+{% extends "::base.html.twig" %}
+
+{% block content %}
+<h2>État des capteurs</h2>
+<table class="zebra-striped">
+    <thead>
+        <tr>
+            <th>Métrique</th>
+            <th>Pièce</th>
+            <th>Dernière mesure</th>
+            <th>Valeur</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for i, metric in metrics %}
+        {% if metric.infos is defined %}
+            {% for j, info in metric.infos %}
+            <tr>
+                {% if j == 0 %}
+                <td rowspan="{{ metric.infos|length }}">
+                    <span class="label success">Opérationnel</span> {{ metric.name }}
+                </td>
+                {% endif %}
+                <td>{{ info.room.name }}</td>
+                <td>{{ metric.formatter.format(info.details.value) }}</td>
+                <td>{{ info.details.date|date('d/m/Y à H:i') }}</td>
+            </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td>
+                    <span class="label warning">État inconnu</span> {{ metric.name }}
+                </td>
+                <td colspan="3" style="text-align: center;">Aucune donnée.</td>
+            </tr>
+        {% endif %}
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
