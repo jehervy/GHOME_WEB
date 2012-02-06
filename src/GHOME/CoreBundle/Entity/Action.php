@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Action
 {
 	const AUTHOR_SYSTEM = 'system';
+	const AUTHOR_DEFAULT = 'admin';
 	
     /**
      * @ORM\Id
@@ -44,6 +45,15 @@ class Action
      */
     protected $value;
 
+	public function __construct($room, $metric, $value, $author = self::AUTHOR_DEFAULT)
+	{
+		$this->room = ($room instanceof Room) ? $room->getId() : $room;
+		$this->metric = ($metric instanceof Metric) ? $metric->getId() : $metric;
+		$this->value = $value;
+		$this->author = $author;
+		$this->date = new \DateTime();
+	}
+
     /**
      * Get id
      *
@@ -72,6 +82,16 @@ class Action
     public function getDate()
     {
         return $this->date;
+    }
+
+	/**
+     * Get date as a timestamp
+     *
+     * @return integer
+     */
+    public function getTimestamp()
+    {
+        return strtotime($this->date->format('Y-m-d H:i:s'));
     }
 
     /**

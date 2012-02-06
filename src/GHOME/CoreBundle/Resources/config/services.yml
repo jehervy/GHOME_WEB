@@ -1,4 +1,8 @@
 services:
+    ghome_core.twig.extension:
+        class: GHOME\CoreBundle\Twig\GHOMEExtension
+        tags:
+            - { name: twig.extension }
     ghome_core.room_manager:
         class: GHOME\CoreBundle\Entity\RoomManager
         arguments: [%ghome.etc_dir%]

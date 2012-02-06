@@ -12,8 +12,7 @@
         <tr>
             <th>Métrique</th>
             <th>Pièce</th>
-            <th>Dernière mesure</th>
-            <th>Valeur</th>
+            <th colspan="2">Valeur</th>
         </tr>
     </thead>
     <tbody>
@@ -30,8 +29,12 @@
                     {{ info.roomEntity.name }}
                 </a>
             </td>
-            <td>{{ info.date|date('d/m/Y à H:i') }}</td>
             <td>{{ info.metricEntity.formatSensor(info.value) }}</td>
+            <td>
+                <a href="{{ path('ghome_core_default_sensor', {'metricId': info.metricEntity.id, 'roomId': info.roomEntity.id}) }}" class="btn">
+                    Détails
+                </a>
+            </td>
         </tr>
     {% endfor %}
     </tbody>

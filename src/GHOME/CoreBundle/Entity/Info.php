@@ -70,6 +70,16 @@ class Info
         return $this->date;
     }
 
+	/**
+     * Get date as a timestamp
+     *
+     * @return integer
+     */
+    public function getTimestamp()
+    {
+        return strtotime($this->date->format('Y-m-d H:i:s'));
+    }
+
     /**
      * Set metric
      *

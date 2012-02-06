@@ -23,7 +23,7 @@
         {% for info in infos %}
         <tr>
             <td>
-                <a href="{{ path('ghome_core_default_roommetric', {'metricId': metric.id, 'roomId': info.roomEntity.id} )}}">
+                <a href="{{ path('ghome_core_default_sensor', {'metricId': metric.id, 'roomId': info.roomEntity.id} )}}">
                     {{ info.roomEntity.name }}
                 </a>
             </td>

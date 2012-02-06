@@ -2,7 +2,10 @@
 
 namespace GHOME\CoreBundle\Controller;
 
+use GHOME\CoreBundle\Entity\Action;
+
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -58,18 +61,41 @@ class DefaultController extends Controller
 	 * @Route("/sensor/{metricId}/{roomId}")
 	 * @Template()
 	 */
-	public function roomMetricAction($metricId, $roomId)
+	public function sensorAction($metricId, $roomId, Request $request)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 		
 		$room = $this->findRoom($roomId);
 		$metric = $this->findMetric($metricId);
+		
+		if ($request->query->has('do'))
+		{
+			//TODO: factorize in a service.
+			$value = (bool) $request->query->get('do');
+			$fd = pfsockopen("127.0.0.1",3023, $errno, $errstr,30);
+			$str = '2'.strlen($metric->getId()).$metric->getId().strlen($room->getId()).$room->getId().'1'.$value;
+			fwrite($fd, $str);
+			
+			$action = new Action($room, $metric, $value);
+			$em->persist($action);
+			$em->flush();
+			
+			return $this->redirect($this->generateUrl(
+				'ghome_core_default_sensor', 
+				array('metricId' => $metricId, 'roomId' => $roomId)
+			));
+		}
+		
 		$infos = $this->finishHydration($em->getRepository('GHOMECoreBundle:Info')->findByMetricAndRoom($metricId, $roomId));
-				
+		$actions = $em->getRepository('GHOMECoreBundle:Action')->findByMetricAndRoom($metricId, $roomId);
+		$data = $this->mergeInfosAndActions($infos, $actions);
+		
 		return array(
 			'metric' => $metric,
 			'room' => $room, 
 			'infos' => $infos,
+			'actions' => $actions,
+			'data' => $data,
 		);
 	}
 	
@@ -109,5 +135,37 @@ class DefaultController extends Controller
 		}
 		
 		return $infos;
+	}
+	
+	private function mergeInfosAndActions($infos, $actions)
+	{
+		$data = array();
+		foreach ($infos as $info)
+		{
+			if (!isset($data[$info->getTimestamp()]))
+			{
+				$data[$info->getTimestamp()] = array();
+			}
+			$data[$info->getTimestamp()][] = $info;
+		}
+		
+		foreach ($actions as $action)
+		{
+			if (!isset($data[$action->getTimestamp()]))
+			{
+				$data[$action->getTimestamp()] = array();
+			}
+			$data[$action->getTimestamp()][] = $action;
+		}
+		
+		ksort($data);
+		$retval = array();
+		
+		foreach ($data as $time => $rows)
+		{
+			$retval = array_merge($retval, $rows);
+		}
+		
+		return $retval;
 	}
 }

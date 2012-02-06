@@ -19,29 +19,60 @@
     </li>
 </ul>
 
-<div class="alert alert-success">
-    Dernière mesure : {{ metric.formatSensor(infos.0.value) }}
+<div class="row">
+    <div class="span4">
+        <div class="alert alert-success">
+            Dernière mesure : {{ metric.formatSensor(infos.0.value) }}
+        </div>
+
+        <div class="alert alert-info">
+            {% if actions|length == 0 or actions.0.value == 0 %}
+                {{ metric.formatActuator(0) }}
+                <a class="btn btn-success" style="margin-left: 40px;" href="?do=1">Activer</a>
+            {% else %}
+                {{ metric.formatActuator(actions.0.value) }}
+                <a class="btn btn-danger" style="margin-left: 40px;" href="?do=0">Désactiver</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="span8">
+        <div id="chart_div"></div>
+    </div>
 </div>
 
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>Date de la mesure</th>
-            <th>Valeur mesurée</th>
+            <th>Type</th>
+            <th>Date</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
-        {% for info in infos %}
+        {% for row in data %}
+        {% if row is instanceof('\\GHOME\\CoreBundle\\Entity\\Info') %}
         <tr>
-            <td>{{ info.date|date('d/m/Y à H:i') }}</td>
-            <td>{{ metric.formatSensor(info.value) }}</td>
+            <td><span class="label">Mesure</span></td>
+            <td>{{ row.date|date('d/m/Y à H:i') }}</td>
+            <td>{{ metric.formatSensor(row.value) }}</td>
         </tr>
+        {% elseif row is instanceof('\\GHOME\\CoreBundle\\Entity\\Action') %}
+        <tr>
+            <td>
+                <span class="label {% if row.value > 0 %}label-success{% else %}label-important{% endif %}">
+                    Action
+                </span>
+            </td>
+            <td>{{ row.date|date('d/m/Y à H:i') }}</td>
+            <td>{{ metric.formatActuator(row.value) }}</td>
+        </tr>
+        {% endif %}
         {% endfor %}
         
     </tbody>
 </table>
 
-<div id="chart_div"></div>
 {% endblock %}
 
 {% block javascripts %}
