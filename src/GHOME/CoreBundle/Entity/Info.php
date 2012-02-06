@@ -37,6 +37,9 @@ class Info
      */
     protected $value;
 
+	protected $roomEntity;
+	protected $metricEntity;
+
     /**
      * Get id
      *
@@ -74,7 +77,7 @@ class Info
      */
     public function setMetric($metric)
     {
-        $this->metric = $metric;
+     	$this->metric = $metric;
     }
 
     /**
@@ -106,6 +109,47 @@ class Info
     {
         return $this->room;
     }
+
+	/**
+     * Set metricEntity
+     *
+     * @param integer $metric
+     */
+    public function setMetricEntity($metric)
+    {
+     	$this->metricEntity = $metric;
+    }
+
+    /**
+     * Get metricEntity
+     *
+     * @return integer 
+     */
+    public function getMetricEntity()
+    {
+        return $this->metricEntity;
+    }
+
+    /**
+     * Set roomEntity
+     *
+     * @param integer $room
+     */
+    public function setRoomEntity($room)
+    {
+        $this->roomEntity = $room;
+    }
+
+    /**
+     * Get roomEntity
+     *
+     * @return integer 
+     */
+    public function getRoomEntity()
+    {
+        return $this->roomEntity;
+    }
+
 
     /**
      * Set value

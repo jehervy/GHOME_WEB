@@ -2,8 +2,12 @@
 
 {% block content %}
 <ul class="breadcrumb">
+    <li>
+        <a href="{{ path('ghome_core_default_index') }}">Accueil</a> 
+        <span class="divider">/</span>
+    </li>
     <li class="active">
-        Accueil
+        {{ room.name }}
     </li>
 </ul>
 
@@ -11,29 +15,24 @@
     <thead>
         <tr>
             <th>Métrique</th>
-            <th>Pièce</th>
             <th>Dernière mesure</th>
             <th>Valeur</th>
         </tr>
     </thead>
     <tbody>
-    {% for info in infos %}
+        {% for info in infos %}
         <tr>
             <td>
                 <span class="label label-success">OK</span> 
-                <a href="{{ path('ghome_core_default_metric', {'id': info.metricEntity.id}) }}">
+                <a href="{{ path('ghome_core_default_roommetric', {'metricId': info.metricEntity.id, 'roomId': room.id} )}}">
                     {{ info.metricEntity.name }}
-                </a>
-            </td>
-            <td>
-                <a href="{{ path('ghome_core_default_room', {'id': info.roomEntity.id}) }}">
-                    {{ info.roomEntity.name }}
                 </a>
             </td>
             <td>{{ info.date|date('d/m/Y à H:i') }}</td>
             <td>{{ info.metricEntity.formatSensor(info.value) }}</td>
         </tr>
-    {% endfor %}
+        {% endfor %}
     </tbody>
 </table>
 {% endblock %}
+

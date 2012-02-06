@@ -12,4 +12,15 @@ use Doctrine\ORM\EntityRepository;
  */
 class ActionRepository extends EntityRepository
 {
+	public function findByMetricAndRoom($metric, $room)
+	{
+	    return $this->getEntityManager()
+	        ->createQuery(
+				'SELECT i FROM GHOMECoreBundle:Action a '.
+				'WHERE a.metric = :metric AND a.room = :room '.
+				'ORDER BY a.date DESC')
+			->setParameter('metric', $metric)
+			->setParameter('room', $room)
+	        ->getResult();
+	}
 }

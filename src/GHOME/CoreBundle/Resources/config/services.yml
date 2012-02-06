@@ -1,4 +1,12 @@
 services:
-    ghome_core.configuration_manager:
-        class: GHOME\CoreBundle\Configuration\ConfigurationManager
-        arguments: ['/Users/vincent/workspace/GHOME/etc']
+    ghome_core.room_manager:
+        class: GHOME\CoreBundle\Entity\RoomManager
+        arguments: [%ghome.etc_dir%]
+        
+    ghome_core.metric_manager:
+        class: GHOME\CoreBundle\Entity\MetricManager
+        arguments: [%ghome.etc_dir%]
+    
+    ghome_core.sensor_manager:
+        class: GHOME\CoreBundle\Entity\SensorManager
+        arguments: [%ghome.etc_dir%, @ghome_core.metric_manager, @ghome_core.room_manager]

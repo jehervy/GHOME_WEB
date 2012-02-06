@@ -1,0 +1,76 @@
+{% extends "::base.html.twig" %}
+
+{% block content %}
+<ul class="breadcrumb">
+    <li>
+        <a href="{{ path('ghome_core_default_index') }}">Accueil</a> 
+        <span class="divider">/</span>
+    </li>
+    <li>
+        <a href="{{ path('ghome_core_default_metric', {'id': metric.id})}}">{{ metric.name }}</a> 
+        <span class="divider">/</span>
+    </li>
+    <li>
+        <a href="{{ path('ghome_core_default_room', {'id': room.id})}}">{{ room.name }}</a> 
+        <span class="divider">/</span>
+    </li>
+    <li class="active">
+        Mesures
+    </li>
+</ul>
+
+<div class="alert alert-success">
+    Dernière mesure : {{ metric.formatSensor(infos.0.value) }}
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Date de la mesure</th>
+            <th>Valeur mesurée</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for info in infos %}
+        <tr>
+            <td>{{ info.date|date('d/m/Y à H:i') }}</td>
+            <td>{{ metric.formatSensor(info.value) }}</td>
+        </tr>
+        {% endfor %}
+        
+    </tbody>
+</table>
+
+<div id="chart_div"></div>
+{% endblock %}
+
+{% block javascripts %}
+<script type="text/javascript">
+    google.load("visualization", "1", {packages:["corechart"]});
+    google.setOnLoadCallback(drawChart);
+    function drawChart()
+    {
+        var data = new google.visualization.DataTable();
+        data.addColumn('datetime', 'Date');
+        data.addColumn('number', {{ metric.name|json_encode|raw }});
+        data.addRows([
+            {% for info in infos %}
+            [new Date({{ info.date|date('r')|json_encode|raw }}), {{ info.value }}]{% if not loop.last %}, {% endif %}
+            {% endfor %}
+        ]);
+        
+        /*var formatter = new google.visualization.NumberFormat(
+              {suffix: ' ', negativeColor: 'red', negativeParens: true});
+        formatter.format(data, 2);*/
+
+        var options = {
+            width: 800, height: 400,
+            pointSize: 5,
+            legend: 'none',
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+    }
+</script>
+{% endblock %}
