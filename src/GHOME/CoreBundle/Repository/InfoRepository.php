@@ -15,7 +15,7 @@ class InfoRepository extends EntityRepository
 	        ->createQuery(
 				'SELECT i FROM GHOMECoreBundle:Info i '.
 				'GROUP BY i.metric, i.room '.
-				'ORDER BY i.metric, i.date DESC')
+				'ORDER BY i.metric, i.time DESC')
 	        ->getResult();
 	}
 	
@@ -25,7 +25,7 @@ class InfoRepository extends EntityRepository
 	        ->createQuery(
 				'SELECT i FROM GHOMECoreBundle:Info i '.
 				'WHERE i.metric = :metric AND i.room = :room '.
-				'ORDER BY i.date DESC')
+				'ORDER BY i.time DESC')
 			->setParameter('metric', $metric)
 			->setParameter('room', $room)
 	        ->getResult();

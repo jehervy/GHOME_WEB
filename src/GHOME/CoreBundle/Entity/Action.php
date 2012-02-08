@@ -23,7 +23,7 @@ class Action
 	/**
      * @ORM\Column(type="datetime")
      */
-    protected $date;
+    protected $time;
 
     /**
      * @ORM\Column(type="string", length=100)
@@ -51,7 +51,7 @@ class Action
 		$this->metric = ($metric instanceof Metric) ? $metric->getId() : $metric;
 		$this->value = $value;
 		$this->author = $author;
-		$this->date = new \DateTime();
+		$this->time = new \DateTime();
 	}
 
     /**
@@ -62,36 +62,6 @@ class Action
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set date
-     *
-     * @param datetime $date
-     */
-    public function setDate($date)
-    {
-        $this->date = $date;
-    }
-
-    /**
-     * Get date
-     *
-     * @return datetime 
-     */
-    public function getDate()
-    {
-        return $this->date;
-    }
-
-	/**
-     * Get date as a timestamp
-     *
-     * @return integer
-     */
-    public function getTimestamp()
-    {
-        return strtotime($this->date->format('Y-m-d H:i:s'));
     }
 
     /**
@@ -172,5 +142,35 @@ class Action
     public function getValue()
     {
         return $this->value;
+    }
+
+    /**
+     * Set time
+     *
+     * @param datetime $time
+     */
+    public function setTime($time)
+    {
+        $this->time = $time;
+    }
+
+    /**
+     * Get time
+     *
+     * @return datetime 
+     */
+    public function getTime()
+    {
+        return $this->time;
+    }
+
+	/**
+     * Get date as a timestamp
+     *
+     * @return integer
+     */
+    public function getTimestamp()
+    {
+        return strtotime($this->time->format('Y-m-d H:i:s'));
     }
 }

@@ -28,7 +28,7 @@
                     {{ info.metricEntity.name }}
                 </a>
             </td>
-            <td>{{ info.date|date('d/m/Y à H:i') }}</td>
+            <td>{{ info.time|date('d/m/Y à H:i') }}</td>
             <td>{{ info.metricEntity.formatSensor(info.value) }}</td>
         </tr>
         {% endfor %}

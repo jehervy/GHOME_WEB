@@ -64,7 +64,7 @@
         {% if row is instanceof('\\GHOME\\CoreBundle\\Entity\\Info') %}
         <tr>
             <td><span class="label">Mesure</span></td>
-            <td>{{ row.date|date('d/m/Y à H:i') }}</td>
+            <td>{{ row.time|date('d/m/Y à H:i') }}</td>
             <td>{{ metric.formatSensor(row.value) }}</td>
         </tr>
         {% elseif row is instanceof('\\GHOME\\CoreBundle\\Entity\\Action') %}
@@ -74,7 +74,7 @@
                     Action
                 </span>
             </td>
-            <td>{{ row.date|date('d/m/Y à H:i') }}</td>
+            <td>{{ row.time|date('d/m/Y à H:i') }}</td>
             <td>{{ metric.formatActuator(row.value) }}</td>
         </tr>
         {% endif %}
@@ -98,7 +98,7 @@
         data.addColumn('number', {{ metric.name|json_encode|raw }});
         data.addRows([
             {% for info in infos %}
-            [new Date({{ info.date|date('r')|json_encode|raw }}), {{ info.value }}]{% if not loop.last %}, {% endif %}
+            [new Date({{ info.time|date('r')|json_encode|raw }}), {{ info.value }}]{% if not loop.last %}, {% endif %}
             {% endfor %}
         ]);
         

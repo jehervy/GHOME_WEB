@@ -18,7 +18,7 @@ class ActionRepository extends EntityRepository
 	        ->createQuery(
 				'SELECT a FROM GHOMECoreBundle:Action a '.
 				'WHERE a.metric = :metric AND a.room = :room '.
-				'ORDER BY a.date DESC')
+				'ORDER BY a.time DESC')
 			->setParameter('metric', $metric)
 			->setParameter('room', $room)
 	        ->getResult();

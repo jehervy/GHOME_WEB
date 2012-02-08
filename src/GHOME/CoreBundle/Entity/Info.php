@@ -20,7 +20,7 @@ class Info
 	/**
      * @ORM\Column(type="datetime")
      */
-    protected $date;
+    protected $time;
 
     /**
      * @ORM\Column(type="integer")
@@ -48,36 +48,6 @@ class Info
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set date
-     *
-     * @param datetime $date
-     */
-    public function setDate($date)
-    {
-        $this->date = $date;
-    }
-
-    /**
-     * Get date
-     *
-     * @return datetime 
-     */
-    public function getDate()
-    {
-        return $this->date;
-    }
-
-	/**
-     * Get date as a timestamp
-     *
-     * @return integer
-     */
-    public function getTimestamp()
-    {
-        return strtotime($this->date->format('Y-m-d H:i:s'));
     }
 
     /**
@@ -179,5 +149,35 @@ class Info
     public function getValue()
     {
         return $this->value;
+    }
+
+    /**
+     * Set time
+     *
+     * @param datetime $time
+     */
+    public function setTime($time)
+    {
+        $this->time = $time;
+    }
+
+    /**
+     * Get time
+     *
+     * @return datetime 
+     */
+    public function getTime()
+    {
+        return $this->time;
+    }
+
+	/**
+     * Get date as a timestamp
+     *
+     * @return integer
+     */
+    public function getTimestamp()
+    {
+        return strtotime($this->time->format('Y-m-d H:i:s'));
     }
 }
