@@ -1,0 +1,37 @@
+{% extends "::base.html.twig" %}
+
+{% block content %}
+<ul class="breadcrumb">
+    <li>
+        <a href="{{ path('ghome_core_default_index') }}">Accueil</a> 
+        <span class="divider">/</span>
+    </li>
+    <li class="active">
+        Journaux
+    </li>
+</ul>
+
+{{ pagerfanta(pager, 'twitter_bootstrap') }}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Message</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for log in pager.currentPageResults %}
+        <tr>
+            <td>{{ log.time|date('d/m/Y à H:i') }}</td>
+            <td>
+                {{ log.message }}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{{ pagerfanta(pager, 'twitter_bootstrap') }}
+
+{% endblock %}

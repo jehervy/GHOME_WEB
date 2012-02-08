@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="GHOME\CoreBundle\Repository\InfoRepository")
- * @ORM\Table(name="metric")
+ * @ORM\Table(name="sensors_values")
  */
 class Info
 {

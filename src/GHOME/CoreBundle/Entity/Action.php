@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="GHOME\CoreBundle\Repository\ActionRepository")
- * @ORM\Table(name="action")
+ * @ORM\Table(name="actuators_commands")
  */
 class Action
 {

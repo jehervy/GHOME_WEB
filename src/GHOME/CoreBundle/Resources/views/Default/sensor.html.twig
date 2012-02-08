@@ -21,10 +21,17 @@
 
 <div class="row">
     <div class="span4">
+        {% if metric.isSensor %}
         <div class="alert alert-success">
+            {% if infos.0 %}
             Dernière mesure : {{ metric.formatSensor(infos.0.value) }}
+            {% else %}
+            <em>Aucune mesure</em>
+            {% endif %}
         </div>
+        {% endif %}
 
+        {% if metric.isActuator %}
         <div class="alert alert-info">
             {% if actions|length == 0 or actions.0.value == 0 %}
                 {{ metric.formatActuator(0) }}
@@ -34,12 +41,15 @@
                 <a class="btn btn-danger" style="margin-left: 40px;" href="?do=0">Désactiver</a>
             {% endif %}
         </div>
+        {% endif %}
     </div>
 
     <div class="span8">
         <div id="chart_div"></div>
     </div>
 </div>
+
+{{ pagerfanta(pager, 'twitter_bootstrap') }}
 
 <table class="table table-striped">
     <thead>
@@ -50,7 +60,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for row in data %}
+        {% for row in pager.currentPageResults %}
         {% if row is instanceof('\\GHOME\\CoreBundle\\Entity\\Info') %}
         <tr>
             <td><span class="label">Mesure</span></td>
@@ -72,6 +82,8 @@
         
     </tbody>
 </table>
+
+{{ pagerfanta(pager, 'twitter_bootstrap') }}
 
 {% endblock %}
 

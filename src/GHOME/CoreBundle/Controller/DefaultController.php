@@ -3,6 +3,8 @@
 namespace GHOME\CoreBundle\Controller;
 
 use GHOME\CoreBundle\Entity\Action;
+use Pagerfanta\Adapter\ArrayAdapter;
+use Pagerfanta\Pagerfanta;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,10 +20,7 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
-		$roomManager = $this->get('ghome_core.room_manager');
-		$metricManager = $this->get('ghome_core.metric_manager');
-		$em = $this->getDoctrine()->getEntityManager();
-		
+		$em = $this->getDoctrine()->getEntityManager();		
 		$infos = $this->finishHydration($em->getRepository('GHOMECoreBundle:Info')->findLastValues());
 		
         return array('infos' => $infos);
@@ -88,14 +87,21 @@ class DefaultController extends Controller
 		
 		$infos = $this->finishHydration($em->getRepository('GHOMECoreBundle:Info')->findByMetricAndRoom($metricId, $roomId));
 		$actions = $em->getRepository('GHOMECoreBundle:Action')->findByMetricAndRoom($metricId, $roomId);
-		$data = $this->mergeInfosAndActions($infos, $actions);
+		
+		$adapter = new ArrayAdapter($this->mergeInfosAndActions($infos, $actions));
+		
+		$page = $request->query->has('page') ? $request->query->has('page') : 1;
+		
+		$pagerfanta = new Pagerfanta($adapter);
+		$pagerfanta->setMaxPerPage(30);
+		$pagerfanta->setCurrentPage($page);
 		
 		return array(
 			'metric' => $metric,
 			'room' => $room, 
 			'infos' => $infos,
 			'actions' => $actions,
-			'data' => $data,
+			'pager' => $pagerfanta,
 		);
 	}
 	
