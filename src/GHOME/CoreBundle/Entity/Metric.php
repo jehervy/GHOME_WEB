@@ -54,4 +54,14 @@ class Metric
 	{
 		return $this->isActuator() ? $this->formatters[1]->format($value) : '';
 	}
+	
+	public function getSensorCssClass($value)
+    {
+    	return $this->isSensor() ? $this->formatters[0]->getCssClass($value) : '';
+    }
+    
+    public function getActuatorCssClass($value)
+    {
+    	return $this->isActuator() ? $this->formatters[1]->getCssClass($value) : '';
+    }
 }

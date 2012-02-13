@@ -9,6 +9,11 @@ class StringFormatter extends Formatter
 		return str_replace('{{ value }}', $value, $this->options['format']);
 	}
 	
+	public function getCssClass($value)
+	{
+	    return '';
+	}
+	
 	protected function getDefaultOptions()
 	{
 		return array('format' => '{{ value }}');

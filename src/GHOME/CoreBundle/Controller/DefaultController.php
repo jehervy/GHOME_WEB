@@ -75,9 +75,9 @@ class DefaultController extends Controller
 		{
 			//TODO: factorize in a service.
 			$value = (bool) $request->query->get('do');
-			$fd = pfsockopen("127.0.0.1",3023, $errno, $errstr,30);
+			/*$fd = pfsockopen("127.0.0.1",3023, $errno, $errstr,30);
 			$str = '2'.strlen($metric->getId()).$metric->getId().strlen($room->getId()).$room->getId().'1'.$value;
-			fwrite($fd, $str);
+			fwrite($fd, $str);*/
 			
 			$action = new Action($room, $metric, $value);
 			$em->persist($action);
@@ -181,7 +181,9 @@ class DefaultController extends Controller
 	
 	private function mergeInfosAndActionsBySensor($infos, $actions)
 	{
+	    $metricManager = $this->get('ghome_core.metric_manager');
 		$data = array();
+		
 		foreach ($infos as $info)
 		{
 			if (!isset($data[$info->getMetric()]))
@@ -205,7 +207,7 @@ class DefaultController extends Controller
 			{
 				$data[$action->getMetric()][$action->getRoom()] = array();
 			}
-			$data[$action->getMetric()][$action->getRoom()][] = $info;
+			$data[$action->getMetric()][$action->getRoom()][] = $action;
 		}
 		
 		ksort($data);
@@ -215,16 +217,16 @@ class DefaultController extends Controller
 		{
 		    foreach ($rows as $room => $objects)
 		    {
-		        $temp = array();
+		        $temp = array('metricEntity' => $metricManager->find($metric));
 		        foreach ($objects as $obj)
 		        {
 		            if ($obj instanceof Info)
 		            {
-		                $temp[0] = $obj;
+		                $temp['info'] = $obj;
 		            }
 		            elseif ($obj instanceof Action)
 		            {
-		                $temp[1] = $obj;
+		                $temp['action'] = $obj;
 		            }
 		        }
 		        $retval[] = $temp;

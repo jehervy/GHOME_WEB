@@ -17,7 +17,7 @@ class ActionRepository extends EntityRepository
 	    return $this->getEntityManager()
 	        ->createQuery(
 				'SELECT a FROM GHOMECoreBundle:Action a '.
-				'WHERE a.time = (SELECT MAX(b.time) FROM GHOMECoreBundle:Info b WHERE b.metric = a.metric AND b.room = a.room) '.
+				'WHERE a.time = (SELECT MAX(b.time) FROM GHOMECoreBundle:Action b WHERE b.metric = a.metric AND b.room = a.room) '.
 				'GROUP BY a.metric, a.room '.
 				'ORDER BY a.metric')
 	        ->getResult();

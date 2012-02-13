@@ -9,6 +9,11 @@ class BooleanFormatter extends Formatter
 		return (int) $value ? $this->options['yes'] : $this->options['no'];
 	}
 	
+	public function getCssClass($value)
+	{
+	    return (int) $value ? 'label-success' : 'label-important';
+	}
+	
 	protected function getDefaultOptions()
 	{
 		return array('yes' => 'Actif', 'no' => 'Inactif');
