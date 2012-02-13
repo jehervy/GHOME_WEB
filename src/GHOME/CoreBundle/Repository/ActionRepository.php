@@ -12,6 +12,17 @@ use Doctrine\ORM\EntityRepository;
  */
 class ActionRepository extends EntityRepository
 {
+    public function findLastValues()
+	{
+	    return $this->getEntityManager()
+	        ->createQuery(
+				'SELECT a FROM GHOMECoreBundle:Action a '.
+				'WHERE a.time = (SELECT MAX(b.time) FROM GHOMECoreBundle:Info b WHERE b.metric = a.metric AND b.room = a.room) '.
+				'GROUP BY a.metric, a.room '.
+				'ORDER BY a.metric')
+	        ->getResult();
+	}
+	
 	public function findByMetricAndRoom($metric, $room)
 	{
 	    return $this->getEntityManager()

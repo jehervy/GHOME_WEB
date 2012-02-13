@@ -12,40 +12,41 @@
         <tr>
             <th>Métrique</th>
             <th>Pièce</th>
-            <th colspan="2">Valeur</th>
+            <th colspan="2">État</th>
         </tr>
     </thead>
     <tbody>
-    {% for info in infos %}
+    {% for info in data %}
         <tr>
             <td>
-                {% if info.metricEntity %}
-                <a href="{{ path('ghome_core_default_metric', {'id': info.metricEntity.id}) }}">
-                    {{ info.metricEntity.name }}
+                {% if info.0.metricEntity %}
+                <a href="{{ path('ghome_core_default_metric', {'id': info.0.metricEntity.id}) }}">
+                    {{ info.0.metricEntity.name }}
                 </a>
                 {% else %}
                 <span class="label label-warning">???</span>
                 {% endif %}
             </td>
             <td>
-                {% if info.roomEntity %}
-                <a href="{{ path('ghome_core_default_room', {'id': info.roomEntity.id}) }}">
-                    {{ info.roomEntity.name }}
+                {% if info.0.roomEntity %}
+                <a href="{{ path('ghome_core_default_room', {'id': info.0.roomEntity.id}) }}">
+                    {{ info.0.roomEntity.name }}
                 </a>
                 {% else %}
                 <span class="label label-warning">???</span>
                 {% endif %}
             </td>
             <td>
-                {% if info.metricEntity %}
-                {{ info.metricEntity.formatSensor(info.value) }}
-                {% else %}
-                <span class="label label-warning">???</span> {{ info.value }}
+                {% if info.0 is defined %}
+                    {{ info.0.metricEntity.formatSensor(info.0.value) }}
+                {% endif %}
+                {% if info.1 is defined %}
+                    <span class="label">{{ info.1.metricEntity.formatActuator(info.1.value) }}</span>
                 {% endif %}
             </td>
             <td>
-                {% if info.metricEntity %}
-                <a href="{{ path('ghome_core_default_sensor', {'metricId': info.metricEntity.id, 'roomId': info.roomEntity.id}) }}" class="btn">
+                {% if info.0.metricEntity %}
+                <a href="{{ path('ghome_core_default_sensor', {'metricId': info.0.metricEntity.id, 'roomId': info.0.roomEntity.id}) }}" class="btn">
                     Détails
                 </a>
                 {% endif %}

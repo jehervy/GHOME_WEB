@@ -2,6 +2,7 @@
 
 namespace GHOME\CoreBundle\Controller;
 
+use GHOME\CoreBundle\Entity\Info;
 use GHOME\CoreBundle\Entity\Action;
 use Pagerfanta\Adapter\ArrayAdapter;
 use Pagerfanta\Pagerfanta;
@@ -22,8 +23,11 @@ class DefaultController extends Controller
     {
 		$em = $this->getDoctrine()->getEntityManager();		
 		$infos = $this->finishHydration($em->getRepository('GHOMECoreBundle:Info')->findLastValues());
+		$actions = $this->finishHydration($em->getRepository('GHOMECoreBundle:Action')->findLastValues());
 		
-        return array('infos' => $infos);
+		$data = $this->mergeInfosAndActionsBySensor($infos, $actions);
+		
+        return array('infos' => $infos, 'data' => $data);
     }
 
 	/**
@@ -88,7 +92,7 @@ class DefaultController extends Controller
 		$infos = $this->finishHydration($em->getRepository('GHOMECoreBundle:Info')->findByMetricAndRoom($metricId, $roomId));
 		$actions = $em->getRepository('GHOMECoreBundle:Action')->findByMetricAndRoom($metricId, $roomId);
 		
-		$adapter = new ArrayAdapter($this->mergeInfosAndActions($infos, $actions));
+		$adapter = new ArrayAdapter($this->mergeInfosAndActionsByTime($infos, $actions));
 		
 		$page = $request->query->has('page') ? $request->query->has('page') : 1;
 		
@@ -143,7 +147,7 @@ class DefaultController extends Controller
 		return $infos;
 	}
 	
-	private function mergeInfosAndActions($infos, $actions)
+	private function mergeInfosAndActionsByTime($infos, $actions)
 	{
 		$data = array();
 		foreach ($infos as $info)
@@ -170,6 +174,61 @@ class DefaultController extends Controller
 		foreach ($data as $time => $rows)
 		{
 			$retval = array_merge($retval, $rows);
+		}
+		
+		return $retval;
+	}
+	
+	private function mergeInfosAndActionsBySensor($infos, $actions)
+	{
+		$data = array();
+		foreach ($infos as $info)
+		{
+			if (!isset($data[$info->getMetric()]))
+			{
+				$data[$info->getMetric()] = array();
+			}
+			if (!isset($data[$info->getMetric()][$info->getRoom()]))
+			{
+				$data[$info->getMetric()][$info->getRoom()] = array();
+			}
+			$data[$info->getMetric()][$info->getRoom()][] = $info;
+		}
+		
+		foreach ($actions as $action)
+		{
+			if (!isset($data[$action->getMetric()]))
+			{
+				$data[$action->getMetric()] = array();
+			}
+			if (!isset($data[$action->getMetric()][$action->getRoom()]))
+			{
+				$data[$action->getMetric()][$action->getRoom()] = array();
+			}
+			$data[$action->getMetric()][$action->getRoom()][] = $info;
+		}
+		
+		ksort($data);
+		$retval = array();
+		
+		foreach ($data as $metric => $rows)
+		{
+		    foreach ($rows as $room => $objects)
+		    {
+		        $temp = array();
+		        foreach ($objects as $obj)
+		        {
+		            if ($obj instanceof Info)
+		            {
+		                $temp[0] = $obj;
+		            }
+		            elseif ($obj instanceof Action)
+		            {
+		                $temp[1] = $obj;
+		            }
+		        }
+		        $retval[] = $temp;
+		    }
 		}
 		
 		return $retval;
