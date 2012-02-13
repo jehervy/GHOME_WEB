@@ -19,7 +19,6 @@
     {% for info in infos %}
         <tr>
             <td>
-                <span class="label label-success">OK</span> 
                 <a href="{{ path('ghome_core_default_metric', {'id': info.metricEntity.id}) }}">
                     {{ info.metricEntity.name }}
                 </a>

@@ -11,6 +11,13 @@ class GHOMEExtension extends \Twig_Extension
         );
     }
 
+	public function getFunctions()
+	{
+		return array(
+			'max' => new \Twig_Function_Function('max'),
+		);
+	}
+
 	public function isInstanceOf($value, $class)
 	{
 		return ($value instanceof $class);

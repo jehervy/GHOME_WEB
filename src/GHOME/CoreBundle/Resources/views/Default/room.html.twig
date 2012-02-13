@@ -23,7 +23,6 @@
         {% for info in infos %}
         <tr>
             <td>
-                <span class="label label-success">OK</span> 
                 <a href="{{ path('ghome_core_default_sensor', {'metricId': info.metricEntity.id, 'roomId': room.id} )}}">
                     {{ info.metricEntity.name }}
                 </a>
