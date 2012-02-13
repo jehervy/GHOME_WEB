@@ -23,12 +23,22 @@
         {% for info in infos %}
         <tr>
             <td>
+                {% if info.metricEntity %}
                 <a href="{{ path('ghome_core_default_sensor', {'metricId': info.metricEntity.id, 'roomId': room.id} )}}">
                     {{ info.metricEntity.name }}
                 </a>
+                {% else %}
+                <span class="label label-warning">???</span>
+                {% endif %}
             </td>
             <td>{{ info.time|date('d/m/Y à H:i') }}</td>
-            <td>{{ info.metricEntity.formatSensor(info.value) }}</td>
+            <td>
+                {% if info.metricEntity %}
+                {{ info.metricEntity.formatSensor(info.value) }}
+                {% else %}
+                <span class="label label-warning">???</span> {{ info.value }}
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
     </tbody>

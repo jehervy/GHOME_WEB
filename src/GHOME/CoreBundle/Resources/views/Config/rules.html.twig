@@ -20,22 +20,33 @@
             
             <div class="span5">
                 <div id="conditions">
-                    </div>
-                
-                <a id="link_add_condition">Ajouter une condition</a>
+                    <div id="condition_$id$"><select class="span2" name="condition_metric[$id$]" id="condition_metric_$id$">
+                    {% for metric in metrics %}
+                    <option value="{{ metric.id }}">{{ metric.name }}</option>
+                    {% endfor %}
+                </select>
+                <select class="span1" name="condition_comp[$id$]" id="condition_comp_$id$">
+                    {% for key, value in comparators %}
+                    <option value="{{ key }}">{{ value }}</option>
+                    {% endfor %}
+                </select>
+                <input type="integer" class="span1" name="condition_threshold[$id$]" id="condition_threshold_$id$" /></div>
+                </div>
+                <a id="link_add_condition" href="#">Ajouter une condition</a>
             </div>
             
             <div class="span1">ALORS</div>
             
             <div class="span5">
-                <div id="action_0"><select class="span2" name="action_metric[0]" id="action_metric_0">
-                    {% for metric in metrics %}{% if metric.isActuator %}
-                    <option value="{{ metric.id }}-0">{{ metric.formatActuator(0) }}</option>
-                    <option value="{{ metric.id }}-1">{{ metric.formatActuator(1) }}</option>
-                    {% endif %}{% endfor %}
-                </select></div>
-                
-                <a id="link_add_action">Ajouter une action</a>
+                <div id="actions">
+                    <div id="action_$id$"><select class="span2" name="action_metric[$id$]" id="action_metric_$id$">
+                        {% for metric in metrics %}{% if metric.isActuator %}
+                        <option value="{{ metric.id }}-0">{{ metric.formatActuator(0) }}</option>
+                        <option value="{{ metric.id }}-1">{{ metric.formatActuator(1) }}</option>
+                        {% endif %}{% endfor %}
+                    </select></div>
+                </div>
+                <a id="link_add_action" href="#">Ajouter une action</a>
             </div>
         </div>
         
@@ -83,32 +94,29 @@
 
 {% block javascripts %}
 <script type="text/javascript">
-<div id="condition_$id$"><select class="span2" name="condition_metric[$id$]" id="condition_metric_$id">
-    {% for metric in metrics %}
-    <option value="{{ metric.id }}">{{ metric.name }}</option>
-    {% endfor %}
-</select>
-<select class="span1" name="condition_comp[$id$]" id="condition_comp_$id$">
-    {% for key, value in comparators %}
-    <option value="{{ key }}">{{ value }}</option>
-    {% endfor %}
-</select>
-<input type="integer" class="span1" name="condition_threshold[$id]" id="condition_threshold_$id$" /></div>
+    var condition_prototype = $('#conditions').html();
+    var action_prototype = $('#actions').html();
+
     $('#link_add_condition').click(function(event)
     {
-        var collectionHolder = $('#ghome_core_rule_conditions');
-        var prototype = collectionHolder.attr('data-prototype');
-        form = prototype.replace(/\$\$name\$\$/g, collectionHolder.children().length);
+        var collectionHolder = $('#conditions');
+        form = condition_prototype.replace(/\$id\$/g, collectionHolder.children().length);
         collectionHolder.append(form);
+        return false;
     });
     
-    $('#ghome_core_rule_actions').append('<p><a href="#" id="add_action_link" class="btn">Ajouter une action</a></p>');
-    $('#add_action_link').click(function(event)
+    $('#link_add_action').click(function(event)
     {
-        var collectionHolder = $('#ghome_core_rule_actions');
-        var prototype = collectionHolder.attr('data-prototype');
-        form = prototype.replace(/\$\$name\$\$/g, collectionHolder.children().length);
+        var collectionHolder = $('#actions');
+        form = action_prototype.replace(/\$id\$/g, collectionHolder.children().length);
         collectionHolder.append(form);
+        return false;
     });
+    
+    $(document).ready(function(event)
+    {
+        $('#conditions').html('');
+        $('#actions').html('');
+    })
 </script>
 {% endblock %}

@@ -19,20 +19,36 @@
     {% for info in infos %}
         <tr>
             <td>
+                {% if info.metricEntity %}
                 <a href="{{ path('ghome_core_default_metric', {'id': info.metricEntity.id}) }}">
                     {{ info.metricEntity.name }}
                 </a>
+                {% else %}
+                <span class="label label-warning">???</span>
+                {% endif %}
             </td>
             <td>
+                {% if info.roomEntity %}
                 <a href="{{ path('ghome_core_default_room', {'id': info.roomEntity.id}) }}">
                     {{ info.roomEntity.name }}
                 </a>
+                {% else %}
+                <span class="label label-warning">???</span>
+                {% endif %}
             </td>
-            <td>{{ info.metricEntity.formatSensor(info.value) }}</td>
             <td>
+                {% if info.metricEntity %}
+                {{ info.metricEntity.formatSensor(info.value) }}
+                {% else %}
+                <span class="label label-warning">???</span> {{ info.value }}
+                {% endif %}
+            </td>
+            <td>
+                {% if info.metricEntity %}
                 <a href="{{ path('ghome_core_default_sensor', {'metricId': info.metricEntity.id, 'roomId': info.roomEntity.id}) }}" class="btn">
                     Détails
                 </a>
+                {% endif %}
             </td>
         </tr>
     {% endfor %}
