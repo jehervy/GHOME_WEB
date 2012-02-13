@@ -9,6 +9,7 @@ class MetricManager
 	private $formatters = array(
 		'boolean' => '\GHOME\CoreBundle\Formatter\BooleanFormatter',
 		'string' => '\GHOME\CoreBundle\Formatter\StringFormatter',
+		'nullOrString' => '\GHOME\CoreBundle\Formatter\NullOrStringFormatter',
 	);
 	
 	public function __construct($dir)
