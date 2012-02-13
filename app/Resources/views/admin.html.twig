@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>{% block title %}GHOME Web{% endblock %}</title>
+        <link href="{{ asset('bundles/ghomecore/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
+        <link href="{{ asset('bundles/ghomecore/css/bootstrap-responsive.min.css') }}" rel="stylesheet" type="text/css" />
+        <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />
+    </head>
+    <body style="padding-top: 50px;">
+        <div class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <a class="brand" href="{{ path('ghome_core_default_index') }}">GHOME Web</a>
+                    <ul class="nav">
+                        <li><a href="{{ path('ghome_core_default_index') }}">Ma maison</a></li>
+                        <li class="active"><a href="{{ path('ghome_core_config_index' )}}">Configuration</a></li>
+                        <li><a href="{{ path('ghome_core_log_index') }}">Journaux</a></li>
+                    </ul>
+                </div> <!-- /container -->
+            </div> <!-- /navbar-inner -->
+        </div> <!-- /navbar -->
+        
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span3">
+                    <div class="well sidebar-nav">
+                        <ul class="nav nav-list">
+                            <li class="nav-header">Pilotage</li>
+                            <li><a href="{{ path('ghome_core_config_addrule') }}">
+                                <i class="icon-plus"></i> 
+                                Ajouter une règle</a></li>
+                            <li><a href="{{ path('ghome_core_config_rules') }}">
+                                <i class="icon-list-alt"></i> Liste des règles
+                            </a></li>
+                            
+                            <li class="nav-header">Sécurité</li>
+                            <li><a href="#">
+                                <i class="icon-user"></i>
+                                Utilisateurs
+                            </a></li>
+                        </ul>
+                    </div>
+                </div> <!-- /span3 -->
+                <div class="span9">
+                    {% block content %}{% endblock %}
+                </div> <!-- /span9 -->
+        </div>
+        
+        <script type="text/javascript" src="{{ asset('bundles/ghomecore/js/jquery.min.js') }}"></script>
+        {% block javascripts %}{% endblock %}
+    </body>
+</html>

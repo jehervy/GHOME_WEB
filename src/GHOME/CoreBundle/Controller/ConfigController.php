@@ -14,10 +14,32 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 class ConfigController extends Controller
 {
     /**
+     * @Route("/config")
+     * @Template()
+     */
+     public function indexAction()
+     {
+         return array();
+     }
+     
+    /**
      * @Route("/config/rules")
      * @Template()
      */
     public function rulesAction(Request $request)
+    {
+		$ruleManager = $this->get('ghome_core.rule_manager');
+				
+        return array(
+            'rules' => $ruleManager->findAll(), 
+        );
+    }
+    
+    /**
+     * @Route("/config/rules/add")
+     * @Template()
+     */
+    public function addRuleAction(Request $request)
     {
 		$ruleManager = $this->get('ghome_core.rule_manager');
 		$metricManager = $this->get('ghome_core.metric_manager');
@@ -38,7 +60,6 @@ class ConfigController extends Controller
         }*/
 		
         return array(
-            'rules' => $ruleManager->findAll(), 
             'metrics' => $metricManager->findAll(),
             'comparators' => RuleCondition::getComparators(),
         );

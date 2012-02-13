@@ -1,0 +1,21 @@
+{% extends "::admin.html.twig" %}
+
+{% block content %}
+<ul class="breadcrumb">
+    <li>
+        <a href="{{ path('ghome_core_default_index') }}">Accueil</a> 
+        <span class="divider">/</span>
+    </li>
+    <li class="active">
+        <a href="#">Configuration</a>
+    </li>
+</ul>
+
+<div class="hero-unit">
+    <h1>Configuration</h1>
+    
+    <p style="margin-top: 20px;">
+        &larr; Sélectionnez une action dans le menu de droite pour configurer votre GHOME.
+    </p>
+</div>
+{% endblock %}
