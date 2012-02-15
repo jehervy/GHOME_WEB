@@ -1,0 +1,42 @@
+{% extends "::private.html.twig" %}
+
+{% block content %}
+<ul class="breadcrumb">
+    <li>
+        <a href="{{ path('ghome_core_config_index') }}">Configuration</a>
+        <span class="divider">/</span>
+    </li>
+    <li class="active">
+        Utilisateurs
+    </li>
+</ul>
+
+<p><a href="{{ path('ghome_core_security_add') }}">Ajouter un nouvel utilisateur</a></p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nom d'utilisateur</th>
+            <th>Administrateur</th>
+            <th>Action(s)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.username }}</td>
+            <td>
+                {% if user.admin %}
+                    <i class="icon-ok"></i>
+                {% endif %}
+            </td>
+            <td>
+                <a href="{{ path('ghome_core_security_edit', {'id': user.id}) }}"><i class="icon-pencil"></i></a>
+                <a href="{{ path('ghome_core_security_delete', {'id': user.id}) }}"><i class="icon-trash"></i></a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

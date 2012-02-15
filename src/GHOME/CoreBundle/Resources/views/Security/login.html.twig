@@ -1,0 +1,34 @@
+{% extends "::public.html.twig" %}
+
+{% block content %}
+<ul class="breadcrumb">
+    <li>
+        <a href="{{ path('ghome_core_default_index') }}">Accueil</a> 
+        <span class="divider">/</span>
+    </li>
+    <li class="active">
+        Connexion
+    </li>
+</ul>
+
+{% if error %}
+    <div>{{ error.message }}</div>
+{% endif %}
+
+<form action="{{ path('login_check') }}" method="post" class="well">
+    <div>
+        <label for="username">Nom d'utilisateur</label>
+        <input type="text" id="username" name="_username" value="{{ last_username }}" />
+    </div>
+    <div>
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" name="_password" />
+    </div>
+    <div class="form-inline">
+        <input type="checkbox" id="remember_me" name="_remember_me" checked />
+        <label for="remember_me">Se souvenir de moi</label>
+    </div>
+    <input type="submit" class="btn btn-primary" name="login" value="Me connecter !" />
+</form>
+
+{% endblock %}

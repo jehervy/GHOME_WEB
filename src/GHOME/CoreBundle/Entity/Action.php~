@@ -41,17 +41,17 @@ class Action
     protected $metric;
 
     /**
-     * @ORM\Column(type="decimal", scale=2)
+     * @ORM\Column(type="integer")
      */
     protected $value;
-
+    
 	public function __construct($room, $metric, $value, $author = self::AUTHOR_DEFAULT)
 	{
 		$this->room = ($room instanceof Room) ? $room->getId() : $room;
 		$this->metric = ($metric instanceof Metric) ? $metric->getId() : $metric;
 		$this->value = $value;
 		$this->author = $author;
-		$this->date = new \DateTime();
+		$this->time = new \DateTime();
 	}
 
     /**
@@ -62,36 +62,6 @@ class Action
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set date
-     *
-     * @param datetime $date
-     */
-    public function setDate($date)
-    {
-        $this->date = $date;
-    }
-
-    /**
-     * Get date
-     *
-     * @return datetime 
-     */
-    public function getDate()
-    {
-        return $this->date;
-    }
-
-	/**
-     * Get date as a timestamp
-     *
-     * @return integer
-     */
-    public function getTimestamp()
-    {
-        return strtotime($this->date->format('Y-m-d H:i:s'));
     }
 
     /**
@@ -133,7 +103,7 @@ class Action
     {
         return $this->room;
     }
-
+    
     /**
      * Set metric
      *
@@ -172,5 +142,35 @@ class Action
     public function getValue()
     {
         return $this->value;
+    }
+
+    /**
+     * Set time
+     *
+     * @param datetime $time
+     */
+    public function setTime($time)
+    {
+        $this->time = $time;
+    }
+
+    /**
+     * Get time
+     *
+     * @return datetime 
+     */
+    public function getTime()
+    {
+        return $this->time;
+    }
+
+	/**
+     * Get date as a timestamp
+     *
+     * @return integer
+     */
+    public function getTimestamp()
+    {
+        return strtotime($this->time->format('Y-m-d H:i:s'));
     }
 }

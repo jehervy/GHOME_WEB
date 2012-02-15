@@ -1,4 +1,4 @@
-{% extends "::base.html.twig" %}
+{% extends "::public.html.twig" %}
 
 {% block content %}
 <ul class="breadcrumb">
@@ -99,7 +99,10 @@
                 </span>
             </td>
             <td>{{ row.time|date('d/m/Y à H:i') }}</td>
-            <td>{{ metric.formatActuator(row.value) }}</td>
+            <td>
+                {{ metric.formatActuator(row.value) }}
+                <span style="font-size: 0.8em;">({{ row.author }})</span>
+            </td>
         </tr>
         {% endif %}
         {% endfor %}

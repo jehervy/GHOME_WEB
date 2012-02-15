@@ -1,0 +1,20 @@
+{% extends "::private.html.twig" %}
+
+{% block content %}
+<ul class="breadcrumb">
+    <li>
+        <a href="{{ path('ghome_core_config_index') }}">Configuration</a>
+        <span class="divider">/</span>
+    </li>
+    <li>
+        <a href="{{ path('ghome_core_security_index') }}">Utilisateurs</a>
+        <span class="divider">/</span>
+    </li>
+    <li class="active">
+        Modifier un utilisateur
+    </li>
+</ul>
+
+{% include "GHOMECoreBundle:Security:userForm.html.twig" %}
+
+{% endblock %}

@@ -12,17 +12,13 @@
             <div class="navbar-inner">
                 <div class="container">
                     <a class="brand" href="{{ path('ghome_core_default_index') }}">GHOME Web</a>
-                    <ul class="nav">
-                        <li class="active"><a href="{{ path('ghome_core_default_index') }}">Ma maison</a></li>
-                        <li><a href="{{ path('ghome_core_config_index' )}}">Configuration</a></li>
-                    </ul>
+                    {% block navbar %}
+                    {% endblock %}
                 </div> <!-- /container -->
             </div> <!-- /navbar-inner -->
         </div> <!-- /navbar -->
         
-        <div class="container">
-            {% block content %}{% endblock %}
-        </div>
+        {% block container %}{% endblock %}
         
         <script type="text/javascript" src="{{ asset('bundles/ghomecore/js/jquery.min.js') }}"></script>
         {% block javascripts %}{% endblock %}
