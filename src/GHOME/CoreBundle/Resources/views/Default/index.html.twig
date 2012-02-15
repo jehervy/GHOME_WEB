@@ -10,55 +10,34 @@
 <table class="table table-striped">
     <thead>
         <tr>
+            <th></th>
             <th>Métrique</th>
             <th>Pièce</th>
-            <th colspan="3">État</th>
+            <th>Dernière mesure</th>
+            <th>Dernière action</th>
         </tr>
     </thead>
     <tbody>
     {% for row in data %}
         <tr>
             <td>
-                {% if row.info.metricEntity %}
-                <a href="{{ path('ghome_core_default_metric', {'id': row.info.metricEntity.id}) }}">
-                    {{ row.info.metricEntity.name }}
+                <a href="{{ path('ghome_core_default_sensor', {'metricId': row.metricEntity.id, 'roomId': row.roomEntity.id}) }}" class="btn">+</a>
+            </td>
+            <td>
+                <a href="{{ path('ghome_core_default_metric', {'id': row.metricEntity.id}) }}">
+                    {{ row.metricEntity.name }}
                 </a>
-                {% else %}
-                <span class="label label-warning">???</span>
-                {% endif %}
             </td>
             <td>
-                {% if row.info.roomEntity %}
-                <a href="{{ path('ghome_core_default_room', {'id': row.info.roomEntity.id}) }}">
-                    {{ row.info.roomEntity.name }}
+                <a href="{{ path('ghome_core_default_room', {'id': row.roomEntity.id}) }}">
+                    {{ row.roomEntity.name }}
                 </a>
-                {% else %}
-                <span class="label label-warning">???</span>
-                {% endif %}
             </td>
-            <td>
-                {% if row.info is defined %}
-                    {{ row.info.metricEntity.formatSensor(row.info.value) }}
-                {% elseif row.metricEntity.isSensor %}
-                    <span class="label label-warning">Aucune donnée</span>
-                {% endif %}
-            </td>
-            <td>
-                {% if row.action is defined %}
-                    <span class="label {{ row.action.metricEntity.actuatorCssClass(row.action.value) }}">{{ row.action.metricEntity.formatActuator(row.action.value) }}</span>
-                {% elseif row.metricEntity.isActuator %}
-                    <span class="label label-warning">Aucune donnée</span>
-                {% endif %}
-            </td>
-            <td>
-                {% if row.info.metricEntity %}
-                <a href="{{ path('ghome_core_default_sensor', {'metricId': row.info.metricEntity.id, 'roomId': row.info.roomEntity.id}) }}" class="btn">
-                    Détails
-                </a>
-                {% endif %}
-            </td>
+            <td>{% include "GHOMECoreBundle:Default:sensorLastValue.html.twig" %}</td>
+            <td>{% include "GHOMECoreBundle:Default:sensorLastAction.html.twig" %}</td>
         </tr>
     {% endfor %}
     </tbody>
 </table>
+
 {% endblock %}

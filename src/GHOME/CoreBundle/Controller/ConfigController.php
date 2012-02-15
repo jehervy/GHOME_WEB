@@ -4,6 +4,10 @@ namespace GHOME\CoreBundle\Controller;
 
 use GHOME\CoreBundle\Entity\Rule;
 use GHOME\CoreBundle\Entity\RuleCondition;
+use GHOME\CoreBundle\Entity\Log;
+
+use Pagerfanta\Adapter\DoctrineORMAdapter;
+use Pagerfanta\Pagerfanta;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Request;
@@ -63,5 +67,24 @@ class ConfigController extends Controller
             'metrics' => $metricManager->findAll(),
             'comparators' => RuleCondition::getComparators(),
         );
+    }
+    
+    /**
+     * @Route("/config/logs")
+     * @Template()
+     */
+    public function logsAction(Request $request)
+    {
+		$em = $this->getDoctrine()->getEntityManager();
+		
+		$adapter = new DoctrineORMAdapter($em->getRepository('GHOMECoreBundle:Log')->queryAllOrderedByDate());
+		
+		$page = $request->query->has('page') ? $request->query->has('page') : 1;
+		
+		$pagerfanta = new Pagerfanta($adapter);
+		$pagerfanta->setMaxPerPage(30);
+		$pagerfanta->setCurrentPage($page);
+		
+        return array('pager' => $pagerfanta);
     }
 }

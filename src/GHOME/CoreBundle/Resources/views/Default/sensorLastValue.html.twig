@@ -1,0 +1,8 @@
+{% if row.info %}
+    <span class="label">{{ row.metricEntity.formatSensor(row.info.value) }}</span>
+    <span style="font-size: 0.8em;">({{ row.info.time|date('d/m à H:i') }})</span>
+{% elseif row.metricEntity.isSensor %}
+    <em>Aucune donnée</em>
+{% else %}
+    —
+{% endif %}

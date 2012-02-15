@@ -6,12 +6,12 @@ class NullOrStringFormatter extends Formatter
 {
 	public function format($value)
 	{
-		return (int) $value ? str_replace('{{ value }}', $value, $this->options['format']) : $this->options['no'];
+		return (boolean) $value ? str_replace('{{ value }}', $value, $this->options['format']) : $this->options['no'];
 	}
 	
 	public function getCssClass($value)
 	{
-	    return (int) $value ? 'label-success' : 'label-important';
+	    return (boolean) $value ? 'label-success' : 'label-important';
 	}
 	
 	protected function getDefaultOptions()

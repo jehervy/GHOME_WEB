@@ -20,35 +20,59 @@
 </ul>
 
 <div class="row">
-    <div class="span4">
+    <div class="span{% if infos|length > 0 %}4{% else %}12{% endif %}">
         {% if metric.isSensor %}
         <div class="alert alert-success">
-            {% if infos.0 %}
+            {% if infos.0 is defined %}
             Dernière mesure : {{ metric.formatSensor(infos.0.value) }}
             {% else %}
-            <em>Aucune mesure</em>
+            <em>Aucune mesure enregistrée</em>
             {% endif %}
         </div>
         {% endif %}
 
         {% if metric.isActuator %}
         <div class="alert alert-info">
+            Dernière action :
             {% if actions|length == 0 or actions.0.value == 0 %}
-                {{ metric.formatActuator(0) }}
-                <a class="btn btn-success" style="margin-left: 40px;" href="?do=1">Activer</a>
+                {{ metric.formatActuator(0)|lower }}
             {% else %}
                 {{ metric.formatActuator(actions.0.value) }}
-                <a class="btn btn-danger" style="margin-left: 40px;" href="?do=0">Désactiver</a>
             {% endif %}
+            
+            <form method="post" action="{{ path('ghome_core_default_sensor', {'roomId': room.id, 'metricId': metric.id}) }}" style="margin-top: 15px; text-align: center;">
+                {% if availableActions|length > 1 %}
+                    <select name="do" class="span2">
+                        {% for action in availableActions %}
+                        <option value="{{ action }}">{{ metric.formatActuator(action) }}</option>
+                        {% endfor %}
+                    </select>
+                {% else %}
+                <input type="hidden" name="do" value="{% if actions|length == 0 or actions.0.value == 0 %}1{% else %}0{% endif %}" />
+                {% endif %}
+                
+                {% if availableActions|length <= 1 %}
+                    {% if actions|length == 0 or actions.0.value == 0 %}
+                        <input type="submit" class="btn btn-success" value="Activer" />
+                    {% else %}
+                        <input type="submit" class="btn btn-danger" value="Désactiver" />
+                    {% endif %}
+                {% else %}
+                    <input type="submit" class="btn btn-primary" value="Go" />
+                {% endif %}
+            </form>
         </div>
         {% endif %}
     </div>
 
+    {% if infos|length > 0 %}
     <div class="span8">
         <div id="chart_div"></div>
     </div>
+    {% endif %}
 </div>
 
+{% if infos|length > 0 or actions|length > 0 %}
 {{ pagerfanta(pager, 'twitter_bootstrap') }}
 
 <table class="table table-striped">
@@ -84,37 +108,40 @@
 </table>
 
 {{ pagerfanta(pager, 'twitter_bootstrap') }}
+{% endif %}
 
 {% endblock %}
 
 {% block javascripts %}
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-<script type="text/javascript">
-    google.load("visualization", "1", {packages:["corechart"]});
-    google.setOnLoadCallback(drawChart);
-    function drawChart()
-    {
-        var data = new google.visualization.DataTable();
-        data.addColumn('datetime', 'Date');
-        data.addColumn('number', {{ metric.name|json_encode|raw }});
-        data.addRows([
-            {% for info in infos %}
-            [new Date({{ info.time|date('r')|json_encode|raw }}), {{ info.value }}]{% if not loop.last %}, {% endif %}
-            {% endfor %}
-        ]);
+{% if infos|length > 0 %}
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+        google.load("visualization", "1", {packages:["corechart"]});
+        google.setOnLoadCallback(drawChart);
+        function drawChart()
+        {
+            var data = new google.visualization.DataTable();
+            data.addColumn('datetime', 'Date');
+            data.addColumn('number', {{ metric.name|json_encode|raw }});
+            data.addRows([
+                {% for info in infos %}
+                [new Date({{ info.time|date('r')|json_encode|raw }}), {{ info.value }}]{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            ]);
         
-        /*var formatter = new google.visualization.NumberFormat(
-              {suffix: ' ', negativeColor: 'red', negativeParens: true});
-        formatter.format(data, 2);*/
+            /*var formatter = new google.visualization.NumberFormat(
+                  {suffix: ' ', negativeColor: 'red', negativeParens: true});
+            formatter.format(data, 2);*/
 
-        var options = {
-            width: 800, height: 400,
-            pointSize: 5,
-            legend: 'none',
-        };
+            var options = {
+                width: 800, height: 400,
+                pointSize: 5,
+                legend: 'none',
+            };
 
-        var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-        chart.draw(data, options);
-    }
-</script>
+            var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+        }
+    </script>
+    {% endif %}
 {% endblock %}

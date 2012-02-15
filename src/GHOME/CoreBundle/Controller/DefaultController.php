@@ -22,8 +22,8 @@ class DefaultController extends Controller
     public function indexAction()
     {
 		$em = $this->getDoctrine()->getEntityManager();		
-		$infos = $this->finishHydration($em->getRepository('GHOMECoreBundle:Info')->findLastValues());
-		$actions = $this->finishHydration($em->getRepository('GHOMECoreBundle:Action')->findLastValues());
+		$infos = $em->getRepository('GHOMECoreBundle:Info')->findLastValues();
+		$actions = $em->getRepository('GHOMECoreBundle:Action')->findLastValues();
 		
 		$data = $this->mergeInfosAndActionsBySensor($infos, $actions);
 		
@@ -40,9 +40,12 @@ class DefaultController extends Controller
 		$em = $this->getDoctrine()->getEntityManager();
 		
 		$metric = $this->findMetric($id);
-		$infos = $this->finishHydration($em->getRepository('GHOMECoreBundle:Info')->findByMetric($id));
+		$infos = $em->getRepository('GHOMECoreBundle:Info')->findByMetric($id);
+		$actions = $em->getRepository('GHOMECoreBundle:Action')->findByMetric($id);
 		
-        return array('metric' => $metric, 'infos' => $infos);
+		$data = $this->mergeInfosAndActionsBySensor($infos, $actions);
+		
+        return array('metric' => $metric, 'data' => $data);
 	}
 	
 	/**
@@ -55,33 +58,38 @@ class DefaultController extends Controller
 		$em = $this->getDoctrine()->getEntityManager();
 		
 		$room = $this->findRoom($id);
-		$infos = $this->finishHydration($em->getRepository('GHOMECoreBundle:Info')->findByRoom($id));
+		$infos = $em->getRepository('GHOMECoreBundle:Info')->findByRoom($id);
+		$actions = $em->getRepository('GHOMECoreBundle:Action')->findByRoom($id);
 		
-		return array('room' => $room, 'infos' => $infos);
+		$data = $this->mergeInfosAndActionsBySensor($infos, $actions);
+		
+		return array('room' => $room, 'data' => $data);
 	}
 	
 	/**
 	 * @Route("/sensor/{metricId}/{roomId}")
 	 * @Template()
 	 */
-	public function sensorAction($metricId, $roomId, Request $request)
+	public function sensorAction(Request $request, $metricId, $roomId)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 		
 		$room = $this->findRoom($roomId);
 		$metric = $this->findMetric($metricId);
 		
-		if ($request->query->has('do'))
+		if ($request->request->has('do'))
 		{
-			//TODO: factorize in a service.
-			$value = (bool) $request->query->get('do');
+			$value = $metric->validateActuatorValue($request->request->get('do'));
+			
+			$action = new Action($room, $metric, $value);
+			//$this->get('ghome_core.socket_client')->sendAction($action);
+			
+			$em->persist($action);
+			$em->flush();
+			
 			/*$fd = pfsockopen("127.0.0.1",3023, $errno, $errstr,30);
 			$str = '2'.strlen($metric->getId()).$metric->getId().strlen($room->getId()).$room->getId().'1'.$value;
 			fwrite($fd, $str);*/
-			
-			$action = new Action($room, $metric, $value);
-			$em->persist($action);
-			$em->flush();
 			
 			return $this->redirect($this->generateUrl(
 				'ghome_core_default_sensor', 
@@ -89,7 +97,7 @@ class DefaultController extends Controller
 			));
 		}
 		
-		$infos = $this->finishHydration($em->getRepository('GHOMECoreBundle:Info')->findByMetricAndRoom($metricId, $roomId));
+		$infos = $em->getRepository('GHOMECoreBundle:Info')->findByMetricAndRoom($metricId, $roomId);
 		$actions = $em->getRepository('GHOMECoreBundle:Action')->findByMetricAndRoom($metricId, $roomId);
 		
 		$adapter = new ArrayAdapter($this->mergeInfosAndActionsByTime($infos, $actions));
@@ -100,12 +108,23 @@ class DefaultController extends Controller
 		$pagerfanta->setMaxPerPage(30);
 		$pagerfanta->setCurrentPage($page);
 		
+		//Finds the available actions.
+		if ($metric->isActuator())
+		{
+		    $availableActions = $metric->getActuatorValues();
+		    if (isset($actions[0]))
+		    {
+		        unset($availableActions[array_search($actions[0]->getValue(), $availableActions)]);
+		    }
+		}
+		
 		return array(
 			'metric' => $metric,
 			'room' => $room, 
 			'infos' => $infos,
 			'actions' => $actions,
 			'pager' => $pagerfanta,
+			'availableActions' => $metric->isActuator() ? $availableActions : null,
 		);
 	}
 	
@@ -131,20 +150,6 @@ class DefaultController extends Controller
 		}
 		
 		return $room;
-	}
-	
-	private function finishHydration($infos)
-	{
-		$roomManager = $this->get('ghome_core.room_manager');
-		$metricManager = $this->get('ghome_core.metric_manager');
-		
-		foreach ($infos as $i => $info)
-		{
-			$infos[$i]->setRoomEntity($roomManager->find($info->getRoom()));
-			$infos[$i]->setMetricEntity($metricManager->find($info->getMetric()));
-		}
-		
-		return $infos;
 	}
 	
 	private function mergeInfosAndActionsByTime($infos, $actions)
@@ -182,6 +187,8 @@ class DefaultController extends Controller
 	private function mergeInfosAndActionsBySensor($infos, $actions)
 	{
 	    $metricManager = $this->get('ghome_core.metric_manager');
+	    $roomManager = $this->get('ghome_core.room_manager');
+	    $sensorManager = $this->get('ghome_core.sensor_manager');
 		$data = array();
 		
 		foreach ($infos as $info)
@@ -209,6 +216,14 @@ class DefaultController extends Controller
 			}
 			$data[$action->getMetric()][$action->getRoom()][] = $action;
 		}
+	    
+	    foreach ($sensorManager->findAll() as $sensor)
+	    {
+	        if (!isset($data[$sensor->getMetric()->getId()][$sensor->getRoom()->getId()]))
+	        {
+	            $data[$sensor->getMetric()->getId()][$sensor->getRoom()->getId()] = array();
+	        }
+	    }
 		
 		ksort($data);
 		$retval = array();
@@ -217,7 +232,12 @@ class DefaultController extends Controller
 		{
 		    foreach ($rows as $room => $objects)
 		    {
-		        $temp = array('metricEntity' => $metricManager->find($metric));
+		        $temp = array(
+		            'metricEntity' => $metricManager->find($metric), 
+		            'roomEntity' => $roomManager->find($room),
+		            'info' => null, 
+		            'action' => null,
+		        );
 		        foreach ($objects as $obj)
 		        {
 		            if ($obj instanceof Info)

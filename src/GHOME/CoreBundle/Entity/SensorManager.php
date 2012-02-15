@@ -30,9 +30,9 @@ class SensorManager
 	
 	protected function initialize()
 	{
-		$home = new \SimpleXMLElement(file_get_contents($this->dir.'/sensors.xml'));
+		$sensors = new \SimpleXMLElement(file_get_contents($this->dir.'/sensors.xml'));
 		
-		foreach ($home->sensors->sensor as $sensor)
+		foreach ($sensors->sensor as $sensor)
 		{
 			$id = (int) $sensor['id'];
 			$metric = $this->metricManager->find((int) $sensor->metric);

@@ -14,34 +14,29 @@
 <table class="table table-striped">
     <thead>
         <tr>
+            <th></th>
             <th>Métrique</th>
             <th>Dernière mesure</th>
-            <th>Valeur</th>
+            <th>Dernière action</th>
         </tr>
     </thead>
     <tbody>
-        {% for info in infos %}
+    {% for row in data %}
         <tr>
             <td>
-                {% if info.metricEntity %}
-                <a href="{{ path('ghome_core_default_sensor', {'metricId': info.metricEntity.id, 'roomId': room.id} )}}">
-                    {{ info.metricEntity.name }}
-                </a>
-                {% else %}
-                <span class="label label-warning">???</span>
-                {% endif %}
+                <a href="{{ path('ghome_core_default_sensor', {'metricId': row.metricEntity.id, 'roomId': row.roomEntity.id}) }}" class="btn">+</a>
             </td>
-            <td>{{ info.time|date('d/m/Y à H:i') }}</td>
             <td>
-                {% if info.metricEntity %}
-                {{ info.metricEntity.formatSensor(info.value) }}
-                {% else %}
-                <span class="label label-warning">???</span> {{ info.value }}
-                {% endif %}
+                <a href="{{ path('ghome_core_default_metric', {'id': row.metricEntity.id}) }}">
+                    {{ row.metricEntity.name }}
+                </a>
             </td>
+            <td>{% include "GHOMECoreBundle:Default:sensorLastValue.html.twig" %}</td>
+            <td>{% include "GHOMECoreBundle:Default:sensorLastAction.html.twig" %}</td>
         </tr>
-        {% endfor %}
+    {% endfor %}
     </tbody>
 </table>
+
 {% endblock %}
 

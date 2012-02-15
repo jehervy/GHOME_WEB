@@ -11,6 +11,10 @@ class MetricManager
 		'string' => '\GHOME\CoreBundle\Formatter\StringFormatter',
 		'nullOrString' => '\GHOME\CoreBundle\Formatter\NullOrStringFormatter',
 	);
+	private $validators = array(
+		'boolean' => '\GHOME\CoreBundle\Validator\BooleanValidator',
+		'nullOrInteger' => '\GHOME\CoreBundle\Validator\nullOrIntegerValidator',
+	);
 	
 	public function __construct($dir)
 	{
@@ -46,6 +50,7 @@ class MetricManager
 			if (isset($metric->actuator))
 			{
 				$formatters[1] = $this->getFormatter($metric->actuator->formatter);
+				$formatters[2] = $this->getValidator($metric->actuator->validator);
 			}
 			
 			$this->metrics[$id] = new Metric($id, $name, $formatters);
@@ -62,6 +67,29 @@ class MetricManager
 		}
 		
 		$class = $this->formatters[$type];
+		$options = array();
+		
+		foreach ($node->attributes() as $key => $value)
+		{
+			if ($key !== 'type')
+			{
+				$options[$key] = (string) $value;
+			}
+		}
+		
+		return new $class($options);
+	}
+	
+	private function getValidator($node)
+	{
+		$type = (string) $node['type'];
+		
+		if (!isset($this->validators[$type]))
+		{
+			throw new \InvalidArgumentException('Validator '.$type.' not found.');
+		}
+		
+		$class = $this->validators[$type];
 		$options = array();
 		
 		foreach ($node->attributes() as $key => $value)
