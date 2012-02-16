@@ -23,23 +23,22 @@
     <tbody>
         {% for rule in rules %}
         <tr>
-            {% if loop.first %}
-            <td rowspan="{{ max(rule.conditions|length, rule.actions|length) }}">SI</td>
-            {% endif %}
+            <td>SI</td>
             <td>
                 {% for condition in rule.conditions %}
-                {{ condition.metric.name }} 
-                {{ rule.formatComparator(condition.comparator) }} 
-                {{ condition.metric.formatSensor(condition.threshold) }}
+                    {{ condition.metric.name }} 
+                    {{ rule.formatComparator(condition.comparator) }} 
+                    {{ condition.metric.formatSensor(condition.threshold) }}
+                    {% if not loop.last %}<br />{% endif %}
                 {% endfor %}
             </td>
-            {% if loop.first %}
-            <td rowspan="{{ max(rule.conditions|length, rule.actions|length) }}">ALORS</td>
-            {% endif %}
+            
+            <td>ALORS</td>
             <td>
                 {% for action in rule.actions %}
-                {{ action.metric.name }} : 
-                {{ action.metric.formatActuator(action.value) }}
+                    {{ action.metric.name }} : 
+                    {{ action.metric.formatActuator(action.value) }}
+                    {% if not loop.last %}<br />{% endif %}
                 {% endfor %}
             </td>
         </tr>
