@@ -33,7 +33,7 @@ class Info
     protected $room;
 
     /**
-     * @ORM\Column(type="decimal", scale=2)
+     * @ORM\Column(type="integer")
      */
     protected $value;
 

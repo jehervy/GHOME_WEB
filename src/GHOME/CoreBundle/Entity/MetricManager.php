@@ -13,7 +13,7 @@ class MetricManager
 	);
 	private $validators = array(
 		'boolean' => '\GHOME\CoreBundle\Validator\BooleanValidator',
-		'nullOrInteger' => '\GHOME\CoreBundle\Validator\nullOrIntegerValidator',
+		'nullOrInteger' => '\GHOME\CoreBundle\Validator\NullOrIntegerValidator',
 	);
 	
 	public function __construct($dir)

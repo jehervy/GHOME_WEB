@@ -173,7 +173,7 @@ class DefaultController extends Controller
 			$data[$action->getTimestamp()][] = $action;
 		}
 		
-		ksort($data);
+		krsort($data);
 		$retval = array();
 		
 		foreach ($data as $time => $rows)

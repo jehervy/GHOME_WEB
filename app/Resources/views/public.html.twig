@@ -1,15 +1,14 @@
 {% extends "::base.html.twig" %}
 
 {% block navbar %}  
+{% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
 <ul class="nav">
     <li class="active"><a href="{{ path('ghome_core_default_index') }}">Ma maison</a></li>
     {% if is_granted('ROLE_ADMIN') %}
         <li><a href="{{ path('ghome_core_config_index' )}}">Configuration</a></li>
     {% endif %}
-    <li><a href="#">Aide</a></li>
 </ul>
-    
-{% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+
 <ul class="nav pull-right">
     <li><a href="{{ path('logout') }}">Déconnexion ({{ app.user.username }})</a></li>
 </ul>
