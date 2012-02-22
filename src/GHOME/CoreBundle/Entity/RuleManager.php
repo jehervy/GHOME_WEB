@@ -28,6 +28,8 @@ class RuleManager
 	
 	public function add(Rule $rule, $position = null)
 	{
+	    $rule->canonicalize();
+	    
 		if (!isset($position))
 		{
 			$this->entities[] = $rule;
@@ -41,25 +43,7 @@ class RuleManager
 			$this->entities[$position] = $rule;
 		}
 		
-		$xml = '<?xml version="1.0"?>'."\n".'<rules>'."\n";
-		foreach ($this->entities as $rule)
-		{
-		    $xml .= '<rule>'."\n".'<if>'."\n";
-		    foreach ($rule->getConditions() as $condition)
-		    {
-		        $xml .= '<metric id="'.$condition->getMetric()->getId().'" cond="'.$condition->getComparator().'">'.$condition->getThreshold().'</metric>'."\n";
-		    }
-		    $xml .= '</if>'."\n"."<then>"."\n";
-		    foreach ($rule->getActions() as $action)
-		    {
-		        $xml .= '<metric id="'.$action->getMetric()->getId().'">'.$action->getValue().'</metric>'."\n";
-		    }
-		    $xml .= '</then>'."\n".'</rule>'."\n";
-		}
-		$xml .= '</rules>';
-		
-		echo $xml;
-		//file_put_contents($this->dir.'/rules.xml', $xml);
+		$this->dumpXml();
 	}
 	
 	private function initialize()
@@ -82,5 +66,27 @@ class RuleManager
 			
 			$this->entities[] = $ruleEntity;
 		}
+	}
+	
+	private function dumpXml()
+	{
+	    $xml = '<?xml version="1.0"?>'."\n".'<rules>'."\n";
+		foreach ($this->entities as $rule)
+		{
+		    $xml .= "\t".'<rule>'."\n\t\t".'<if>'."\n";
+		    foreach ($rule->getConditions() as $condition)
+		    {
+		        $xml .= "\t\t\t".'<metric id="'.$condition->getMetric()->getId().'" cond="'.$condition->getComparator().'">'.$condition->getThreshold().'</metric>'."\n";
+		    }
+		    $xml .= "\t\t".'</if>'."\n\t\t"."<then>"."\n";
+		    foreach ($rule->getActions() as $action)
+		    {
+		        $xml .= "\t\t\t".'<metric id="'.$action->getMetric()->getId().'">'.$action->getValue().'</metric>'."\n";
+		    }
+		    $xml .= "\t\t".'</then>'."\n\t".'</rule>'."\n";
+		}
+		$xml .= '</rules>';
+		
+		file_put_contents($this->dir.'/rules.xml', $xml);
 	}
 }

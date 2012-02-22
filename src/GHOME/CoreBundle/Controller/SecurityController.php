@@ -12,9 +12,14 @@ use Symfony\Component\Security\Core\SecurityContext;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
+/**
+ * Controller handling security integrity of the application.
+ */
 class SecurityController extends Controller
 {
     /**
+     * Displays a login form. Form processing is handled by the SecurityBundle.
+     *
      * @Route("/login")
      * @Template
      */
@@ -23,21 +28,27 @@ class SecurityController extends Controller
         $request = $this->getRequest();
         $session = $request->getSession();
 
-        // get the login error if there is one
-        if ($request->attributes->has(SecurityContext::AUTHENTICATION_ERROR)) {
+        // Get the login error if there is one.
+        if ($request->attributes->has(SecurityContext::AUTHENTICATION_ERROR))
+        {
             $error = $request->attributes->get(SecurityContext::AUTHENTICATION_ERROR);
-        } else {
+        }
+        else
+        {
             $error = $session->get(SecurityContext::AUTHENTICATION_ERROR);
         }
 
         return array(
-            // last username entered by the user
             'last_username' => $session->get(SecurityContext::LAST_USERNAME),
-            'error'         => $error,
+            'error' => $error,
         );
     }
     
     /**
+     * Displays a list of all users registered in the system.
+     *
+     * @param Request $request
+     *
      * @Route("/config/users")
      * @Template()
      */
@@ -50,6 +61,10 @@ class SecurityController extends Controller
     }
     
     /**
+     * Displays a form to add a new user.
+     *
+     * @param Request $request
+     *
      * @Route("/config/users/add")
      * @Template()
      */
@@ -82,13 +97,16 @@ class SecurityController extends Controller
     }
     
     /**
+     * Displays a form to edit an existing user.
+     *
+     * @param Request $request
+     *
      * @Route("/config/users/edit/{id}")
      * @Template()
      */
     public function editAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getEntityManager();
-        
         $user = $em->getRepository('GHOMECoreBundle:User')->find($id);
         if (!$user)
         {
@@ -101,7 +119,7 @@ class SecurityController extends Controller
 		{
             $form->bindRequest($request);
             
-            //Encode password
+            //Encode password.
             $encoder = $this->get('security.encoder_factory')->getEncoder($user);
             $password = $encoder->encodePassword($user->getPassword(), $user->getSalt());
             $user->setPassword($password);
@@ -118,13 +136,16 @@ class SecurityController extends Controller
     }
     
     /**
+     * Displays a form to delete an existing user.
+     *
+     * @param Request $request
+     *
      * @Route("/config/users/delete/{id}")
      * @Template()
      */
     public function deleteAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getEntityManager();
-        
         $user = $em->getRepository('GHOMECoreBundle:User')->find($id);
         if (!$user)
         {

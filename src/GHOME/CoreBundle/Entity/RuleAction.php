@@ -32,4 +32,14 @@ class RuleAction
 	{
 		return $this->value;
 	}
+	
+	public function equals(RuleAction $action)
+	{
+	    return ($action->getMetric()->getId() == $this->metric->getId());
+	}
+	
+	public function merge(RuleAction $action)
+	{
+	    $this->value = max($this->value, $action->getValue());
+	}
 }

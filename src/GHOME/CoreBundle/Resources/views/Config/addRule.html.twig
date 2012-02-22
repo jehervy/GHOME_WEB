@@ -17,10 +17,10 @@
 
 <form method="post" action="">
     <fieldset>
-        <div class="row">
-            <div class="span1">SI</div>
+        <table style="width: 90%;"><tbody><tr>
+            <td style="width: 10%; vertical-align: top;">SI</td>
             
-            <div class="span5">
+            <td style="width: 40%; vertical-align: top;">
                 <div id="conditions">
                     <div id="condition_$id$"><select class="span5" name="condition_metric[$id$]" id="condition_metric_$id$">
                     {% for metric in metrics %}
@@ -35,13 +35,13 @@
                 <input type="integer" class="span2" name="condition_threshold[$id$]" id="condition_threshold_$id$" /></div>
                 </div>
                 <a id="link_add_condition" href="#">Ajouter une condition</a>
-            </div>
+            </td>
             
-            <div class="span1">ALORS</div>
+            <td style="width: 10%; vertical-align: top;">ALORS</td>
             
-            <div class="span5">
+            <td style="width: 40%; vertical-align: top;">
                 <div id="actions">
-                    <div id="action_$id$"><select class="span5" name="action_metric[$id$]" id="action_metric_$id$">
+                    <div id="action_$id$"><select name="action_metric[$id$]" id="action_metric_$id$">
                         {% for metric in metrics %}{% if metric.isActuator %}
                         <option value="{{ metric.id }}-0">{{ metric.formatActuator(0) }}</option>
                         <option value="{{ metric.id }}-1">{{ metric.formatActuator(1) }}</option>
@@ -49,11 +49,11 @@
                     </select></div>
                 </div>
                 <a id="link_add_action" href="#">Ajouter une action</a>
-            </div>
-        </div>
+            </td>
+        </tr></tbody></table>
         
         <div class="form-actions">
-            <input type="submit" class="btn btn-primary" value="Ajouter" />
+            <input type="submit" class="btn btn-primary" value="Envoyer" />
         </div>
     </fieldset>
 </form>

@@ -7,4 +7,6 @@ interface FormatterInterface
 	function format($value);
 	
 	function getCssClass($value);
+	
+	function isBoolean();
 }

@@ -49,4 +49,33 @@ class Rule
 	{
 		return isset($this->comparators[$comparator]) ? $this->comparators[$comparator] : $comparator;
 	}
+	
+	public function canonicalize()
+	{
+	    $this->actions = $this->doCanonicalize($this->actions);
+	    $this->conditions = $this->doCanonicalize($this->conditions);
+	}
+	
+	public function doCanonicalize(array $elements)
+	{
+	    $canonicalized = array();
+	    foreach ($elements as $element)
+	    {
+	        $found = false;
+	        foreach ($canonicalized as $elem)
+	        {
+	            if ($elem->equals($element))
+	            {
+	                $elem->merge($element);
+	                $found = true;
+	            }
+	        }
+	        if (!$found)
+	        {
+	            $canonicalized[] = $element;
+	        }
+	    }
+	    
+	    return $canonicalized;
+	}
 }

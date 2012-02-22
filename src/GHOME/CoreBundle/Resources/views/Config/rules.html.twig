@@ -18,12 +18,18 @@
         <tr>
             <th colspan="2">Condition(s)</th>
             <th colspan="2">Action(s)</th>
+            <th>Opération(s)</th>
         </tr>
     </thead>
     <tbody>
-        {% for rule in rules %}
+        {% for i, rule in rules %}
         <tr>
-            <td>SI</td>
+            <td>
+                SI
+                {% for j in range(1, rule.conditions|length) %}
+                {% if j > 1 %}<br />ET{% endif %}
+                {% endfor %}
+            </td>
             <td>
                 {% for condition in rule.conditions %}
                     {{ condition.metric.name }} 
@@ -33,13 +39,31 @@
                 {% endfor %}
             </td>
             
-            <td>ALORS</td>
+            <td>
+                ALORS
+                {% for j in range(1, rule.actions|length) %}
+                {% if j > 1 %}<br />ET{% endif %}
+                {% endfor %}
+            </td>
             <td>
                 {% for action in rule.actions %}
                     {{ action.metric.name }} : 
                     {{ action.metric.formatActuator(action.value) }}
                     {% if not loop.last %}<br />{% endif %}
                 {% endfor %}
+            </td>
+            
+            <td>
+                <a href="{{ path('ghome_core_security_edit', {'id': i}) }}"><i class="icon-pencil"></i></a>
+                <a href="{{ path('ghome_core_security_delete', {'id': i}) }}"><i class="icon-trash"></i></a>
+                <a href="{{ path('ghome_core_config_addrule_1', {'position': i}) }}" title="Insérer une règle avant celle-ci">
+                    <i class="icon-arrow-up"></i>
+                </a>
+                {% if loop.last %}
+                    <a href="{{ path('ghome_core_config_addrule') }}" title="Insérer une règle en dernier">
+                        <i class="icon-arrow-down"></i>
+                    </a>
+                {% endif %}
             </td>
         </tr>
         {% endfor %}

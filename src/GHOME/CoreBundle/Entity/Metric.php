@@ -44,6 +44,16 @@ class Metric
 	{
 		return isset($this->formatters[1]);
 	}
+	
+	public function isSensorBoolean()
+	{
+	    return $this->isSensor() && $this->formatters[0]->isBoolean();
+	}
+	
+	public function isActuatorBoolean()
+	{
+	    return true;
+	}
 
 	public function formatSensor($value)
 	{
@@ -53,16 +63,6 @@ class Metric
 	public function formatActuator($value)
 	{
 		return $this->isActuator() ? $this->formatters[1]->format($value) : '';
-	}
-	
-	public function validateActuatorValue($value)
-	{
-		return $this->isActuator() ? $this->formatters[2]->validate($value) : false;
-	}
-	
-	public function getActuatorValues()
-	{
-		return $this->isActuator() ? $this->formatters[2]->getValues() : array();
 	}
 	
 	public function getSensorCssClass($value)

@@ -62,4 +62,22 @@ class RuleCondition
 	{
 		return isset($this->comparators[$this->comparator]) ? $this->comparators[$this->comparator] : $this->comparator;
 	}
+	
+	public function equals(RuleCondition $condition)
+	{
+	    return (
+	        $condition->getMetric()->getId() == $this->metric->getId()
+	        && $condition->getComparator() == $this->comparator
+	    );
+	}
+	
+	public function merge(RuleCondition $condition)
+	{
+	    if (!$this->equals($condition))
+	    {
+	        return;
+	    }
+	    
+	    $this->threshold = max($this->threshold, $condition->getThreshold());
+	}
 }

@@ -14,6 +14,11 @@ class BooleanFormatter extends Formatter
 	    return (int) $value ? 'label-success' : 'label-important';
 	}
 	
+	public function isBoolean()
+	{
+	    return true;
+	}
+	
 	protected function getDefaultOptions()
 	{
 		return array('yes' => 'Actif', 'no' => 'Inactif');

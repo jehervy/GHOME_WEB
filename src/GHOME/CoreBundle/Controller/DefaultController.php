@@ -13,9 +13,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
+/**
+ * Default controller, handling all actions related to the GHOME sensors 
+ * and actuators.
+ */
 class DefaultController extends Controller
 {
     /**
+     * Display the homepage with a summary of all recent data.
+     *
      * @Route("/")
      * @Template()
      */
@@ -31,6 +37,10 @@ class DefaultController extends Controller
     }
 
 	/**
+	 * Displays the summary of all recent data about a specific metric.
+	 *
+	 * @param integer $id The identifier of the metric were're talking about
+	 *
 	 * @Route("/metric/{id}")
 	 * @Template()
 	 */
@@ -49,6 +59,10 @@ class DefaultController extends Controller
 	}
 	
 	/**
+	 * Displays the summary of all recent data about a specific room.
+ 	 *
+ 	 * @param integer $id The identifier of the room were're talking about
+ 	 *
 	 * @Route("/room/{id}")
 	 * @Template()
 	 */
@@ -67,6 +81,13 @@ class DefaultController extends Controller
 	}
 	
 	/**
+	 * Displays all data about a specific sensor (= a combination of a metric 
+	 * and a room).
+	 *
+	 * @param Request $request
+	 * @param integer $metridIc The identifier of the metric were're talking about
+	 * @param integer $roomId he identifier of the room were're talking about
+	 *
 	 * @Route("/sensor/{metricId}/{roomId}")
 	 * @Template()
 	 */
@@ -79,17 +100,13 @@ class DefaultController extends Controller
 		
 		if ($request->request->has('do'))
 		{
-			$value = $metric->validateActuatorValue($request->request->get('do'));
+			$value = (int) $request->request->get('do');
 			
 			$action = new Action($room, $metric, $value);
-			//$this->get('ghome_core.socket_client')->sendAction($action);
+			$this->get('ghome_core.socket_client')->sendAction($action);
 			
 			$em->persist($action);
 			$em->flush();
-			
-			/*$fd = pfsockopen("127.0.0.1",3023, $errno, $errstr,30);
-			$str = '2'.strlen($metric->getId()).$metric->getId().strlen($room->getId()).$room->getId().'1'.$value;
-			fwrite($fd, $str);*/
 			
 			return $this->redirect($this->generateUrl(
 				'ghome_core_default_sensor', 
@@ -101,22 +118,11 @@ class DefaultController extends Controller
 		$actions = $em->getRepository('GHOMECoreBundle:Action')->findByMetricAndRoom($metricId, $roomId);
 		
 		$adapter = new ArrayAdapter($this->mergeInfosAndActionsByTime($infos, $actions));
-		
 		$page = $request->query->has('page') ? $request->query->has('page') : 1;
 		
 		$pagerfanta = new Pagerfanta($adapter);
 		$pagerfanta->setMaxPerPage(30);
 		$pagerfanta->setCurrentPage($page);
-		
-		//Finds the available actions.
-		if ($metric->isActuator())
-		{
-		    $availableActions = $metric->getActuatorValues();
-		    if (isset($actions[0]))
-		    {
-		        unset($availableActions[array_search($actions[0]->getValue(), $availableActions)]);
-		    }
-		}
 		
 		return array(
 			'metric' => $metric,
@@ -124,14 +130,18 @@ class DefaultController extends Controller
 			'infos' => $infos,
 			'actions' => $actions,
 			'pager' => $pagerfanta,
-			'availableActions' => $metric->isActuator() ? $availableActions : null,
 		);
 	}
 	
+	/**
+	 * Finds a metric and throws an exception if not found.
+	 *
+	 * @param integer $id The identifier of the metric to find
+	 * @return Metric
+	 */
 	private function findMetric($id)
 	{
 		$metric = $this->get('ghome_core.metric_manager')->find($id);
-		
 		if (!$metric)
 		{
 			throw new NotFoundHttpException('Metric #'.$metricId.' not found.');
@@ -140,10 +150,15 @@ class DefaultController extends Controller
 		return $metric;
 	}
 	
+	/**
+	 * Finds a room and throws an exception if not found.
+	 *
+	 * @param integer $id The identifier of the room to find
+	 * @return Room
+	 */
 	private function findRoom($id)
 	{
 		$room = $this->get('ghome_core.room_manager')->find($id);
-		
 		if (!$room)
 		{
 			throw new NotFoundHttpException('Room #'.$id.' not found.');
@@ -152,6 +167,14 @@ class DefaultController extends Controller
 		return $room;
 	}
 	
+	/**
+	 * Merge informations from sensors and actuators into an unified 
+	 * array according to chronological order.
+	 * 
+	 * @param array|Collection $infos Data from sensors
+	 * @param array|Collection $actions Data from actuators
+	 * @return array
+	 */
 	private function mergeInfosAndActionsByTime($infos, $actions)
 	{
 		$data = array();
@@ -184,6 +207,20 @@ class DefaultController extends Controller
 		return $retval;
 	}
 	
+	/**
+	 * Merge informations from sensors and actuators into an unified 
+	 * array with a row per sensor (= metric + room combination). For each 
+	 * rows available keys are:
+	 *
+	 *   - metricEntity: the metric we're talking about
+	 *   - roomEntity: the room we're talking about
+	 *   - info: data from sensors for this combination
+	 *   - action: data from actutors for this combination
+	 * 
+	 * @param array|Collection $infos Data from sensors
+	 * @param array|Collection $actions Data from actuators
+	 * @return array
+	 */
 	private function mergeInfosAndActionsBySensor($infos, $actions)
 	{
 	    $metricManager = $this->get('ghome_core.metric_manager');
@@ -191,6 +228,7 @@ class DefaultController extends Controller
 	    $sensorManager = $this->get('ghome_core.sensor_manager');
 		$data = array();
 		
+		//Organize data from sensors per metric and per room.
 		foreach ($infos as $info)
 		{
 			if (!isset($data[$info->getMetric()]))
@@ -204,6 +242,7 @@ class DefaultController extends Controller
 			$data[$info->getMetric()][$info->getRoom()][] = $info;
 		}
 		
+		//Organize data from actuators per metric and per room.
 		foreach ($actions as $action)
 		{
 			if (!isset($data[$action->getMetric()]))
@@ -217,6 +256,7 @@ class DefaultController extends Controller
 			$data[$action->getMetric()][$action->getRoom()][] = $action;
 		}
 	    
+	    //Adds all remaining sensors with no data.
 	    foreach ($sensorManager->findAll() as $sensor)
 	    {
 	        if (!isset($data[$sensor->getMetric()->getId()][$sensor->getRoom()->getId()]))
@@ -228,6 +268,7 @@ class DefaultController extends Controller
 		ksort($data);
 		$retval = array();
 		
+		//And merge!
 		foreach ($data as $metric => $rows)
 		{
 		    foreach ($rows as $room => $objects)

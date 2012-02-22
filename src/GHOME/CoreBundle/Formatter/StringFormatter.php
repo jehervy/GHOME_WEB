@@ -14,6 +14,11 @@ class StringFormatter extends Formatter
 	    return '';
 	}
 	
+	public function isBoolean()
+	{
+	    return false;
+	}
+	
 	protected function getDefaultOptions()
 	{
 		return array('format' => '{{ value }}');

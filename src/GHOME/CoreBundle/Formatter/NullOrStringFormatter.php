@@ -14,6 +14,11 @@ class NullOrStringFormatter extends Formatter
 	    return (boolean) $value ? 'label-success' : 'label-important';
 	}
 	
+	public function isBoolean()
+	{
+	    return false;
+	}
+	
 	protected function getDefaultOptions()
 	{
 		return array('no' => 'Inactif', 'format' => '{{ value }}');

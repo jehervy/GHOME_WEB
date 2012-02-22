@@ -41,24 +41,12 @@
             {% endif %}
             
             <form method="post" action="{{ path('ghome_core_default_sensor', {'roomId': room.id, 'metricId': metric.id}) }}" style="margin-top: 15px; text-align: center;">
-                {% if availableActions|length > 1 %}
-                    <select name="do" class="span2">
-                        {% for action in availableActions %}
-                        <option value="{{ action }}">{{ metric.formatActuator(action) }}</option>
-                        {% endfor %}
-                    </select>
+                {% if actions|length == 0 or actions.0.value == 0 %}
+                    <input type="hidden" name="do" value="1" />
+                    <input type="submit" class="btn btn-success" value="Activer" />
                 {% else %}
-                <input type="hidden" name="do" value="{% if actions|length == 0 or actions.0.value == 0 %}1{% else %}0{% endif %}" />
-                {% endif %}
-                
-                {% if availableActions|length <= 1 %}
-                    {% if actions|length == 0 or actions.0.value == 0 %}
-                        <input type="submit" class="btn btn-success" value="Activer" />
-                    {% else %}
-                        <input type="submit" class="btn btn-danger" value="Désactiver" />
-                    {% endif %}
-                {% else %}
-                    <input type="submit" class="btn btn-primary" value="Go" />
+                    <input type="hidden" name="do" value="0" />
+                    <input type="submit" class="btn btn-danger" value="Désactiver" />
                 {% endif %}
             </form>
         </div>
