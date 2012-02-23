@@ -10,6 +10,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Log
 {
+    const ERROR = 0;
+    const SUCCESS = 1;
+    
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -32,6 +35,12 @@ class Log
      */
     protected $message;
 
+    /**
+     * Constructor.
+     *
+     * @param integer $type The type (usually one of class constants)
+     * @param string $message The message conveyed
+     */
 	public function __construct($type, $message)
 	{
 		$this->type = $type;

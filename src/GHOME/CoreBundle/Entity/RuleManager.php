@@ -43,7 +43,13 @@ class RuleManager
 			$this->entities[$position] = $rule;
 		}
 		
-		$this->dumpXml();
+		$this->writeXml();
+	}
+	
+	public function remove($position)
+	{
+	    unset($this->entities[$position]);
+	    $this->writeXml();
 	}
 	
 	private function initialize()
@@ -68,7 +74,7 @@ class RuleManager
 		}
 	}
 	
-	private function dumpXml()
+	private function writeXml()
 	{
 	    $xml = '<?xml version="1.0"?>'."\n".'<rules>'."\n";
 		foreach ($this->entities as $rule)

@@ -1,0 +1,27 @@
+{% extends "::private.html.twig" %}
+
+{% block content %}
+<ul class="breadcrumb">
+    <li>
+        <a href="{{ path('ghome_core_config_index') }}">Configuration</a>
+        <span class="divider">/</span>
+    </li>
+    <li>
+        <a href="{{ path('ghome_core_config_rules') }}">Règles de pilotage</a>
+        <span class="divider">/</span>
+    </li>
+    <li class="active">
+        Supprimer une règle
+    </li>
+</ul>
+
+<form method="post" action="">
+    <p>Êtes-vous sûr de vouloir supprimer cette règle de pilotage ?</p>
+    
+    <div class="form-actions">
+        <input type="submit" name="confirm" class="btn btn-primary" value="Oui" />
+        <input type="submit" name="cancel" class="btn" value="Annuler" />
+    </div>
+</form>
+
+{% endblock %}

@@ -157,9 +157,7 @@ class SecurityController extends Controller
 		    if ($request->request->has('confirm'))
 		    {
 		        $em->remove($user);
-		        $em->flush();
-
-                return $this->redirect($this->generateUrl('ghome_core_security_index'));
+		        $em->flush();                
             }
             
             return $this->redirect($this->generateUrl('ghome_core_security_index'));

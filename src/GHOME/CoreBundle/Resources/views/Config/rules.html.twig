@@ -54,8 +54,8 @@
             </td>
             
             <td>
-                <a href="{{ path('ghome_core_security_edit', {'id': i}) }}"><i class="icon-pencil"></i></a>
-                <a href="{{ path('ghome_core_security_delete', {'id': i}) }}"><i class="icon-trash"></i></a>
+                {#<a href="{{ path('ghome_core_security_edit', {'position': i}) }}"><i class="icon-pencil"></i></a>#}
+                <a href="{{ path('ghome_core_config_deleterule', {'position': i}) }}"><i class="icon-trash"></i></a>
                 <a href="{{ path('ghome_core_config_addrule_1', {'position': i}) }}" title="Insérer une règle avant celle-ci">
                     <i class="icon-arrow-up"></i>
                 </a>

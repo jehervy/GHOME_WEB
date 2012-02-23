@@ -103,6 +103,37 @@ class ConfigController extends Controller
     }
     
     /**
+     * Displays a form to delete an existing rule.
+     *
+     * @param Request $request
+     * @param integer $position
+     *
+     * @Route("/config/rules/delete/{position}")
+     * @Template()
+     */
+    public function deleteRuleAction(Request $request, $position)
+    {
+        $ruleManager = $this->get('ghome_core.rule_manager');
+        $rule = $ruleManager->find($position);
+        if (!$rule)
+        {
+            throw new NotFoundHttpException();
+        }
+		
+		if ($request->getMethod() === 'POST')
+		{
+		    if ($request->request->has('confirm'))
+		    {
+		        $ruleManager->remove($position);
+            }
+            
+            return $this->redirect($this->generateUrl('ghome_core_config_rules'));
+        }
+        
+        return array('rule' => $rule);
+    }
+    
+    /**
      * Displays a table with the logs.
      *
      * @Route("/config/logs")

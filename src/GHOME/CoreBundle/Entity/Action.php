@@ -45,6 +45,14 @@ class Action
      */
     protected $value;
     
+    /**
+     * Constructor.
+     *
+     * @param integer|Room $room The room where the action has been taken
+     * @param integer|Metric $metric The metric concerned by the action
+     * @param integer $value The value taken by the metric in the room
+     * @param string $author The author of the action
+     */
 	public function __construct($room, $metric, $value, $author = self::AUTHOR_DEFAULT)
 	{
 		$this->room = ($room instanceof Room) ? $room->getId() : $room;
