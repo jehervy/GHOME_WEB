@@ -11,7 +11,18 @@
     </li>
 </ul>
 
-<p><a href="{{ path('ghome_core_security_add') }}">Ajouter un nouvel utilisateur</a></p>
+<div class="alert">
+    <strong>Attention !</strong> Assurez-vous de ne donner accès à votre 
+    GHOME qu'à des utilisateurs de confiance. Seuls les administrateurs ont 
+    accès à l'onglet configuration.
+</div>
+
+<p>
+    <a href="{{ path('ghome_core_security_add') }}">
+        <i class="icon-plus"></i>
+        Ajouter un nouvel utilisateur
+    </a>
+</p>
 
 <table class="table table-striped">
     <thead>
