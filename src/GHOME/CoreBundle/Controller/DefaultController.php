@@ -20,7 +20,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 class DefaultController extends Controller
 {
     /**
-     * Display the homepage with a summary of all recent data.
+     * Displays the homepage with a summary of all recent data.
      *
      * @Route("/")
      * @Template()
@@ -102,7 +102,8 @@ class DefaultController extends Controller
 		{
 			$value = (int) $request->request->get('do');
 			
-			$action = new Action($room, $metric, $value);
+			$username = $user = $this->get('security.context')->getToken()->getUser()->getUsername();
+			$action = new Action($room, $metric, $value, $username);
 			$this->get('ghome_core.socket_client')->sendAction($action);
 			
 			$em->persist($action);
@@ -121,7 +122,7 @@ class DefaultController extends Controller
 		$page = $request->query->has('page') ? $request->query->has('page') : 1;
 		
 		$pagerfanta = new Pagerfanta($adapter);
-		$pagerfanta->setMaxPerPage(30);
+		$pagerfanta->setMaxPerPage(15);
 		$pagerfanta->setCurrentPage($page);
 		
 		return array(

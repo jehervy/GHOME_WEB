@@ -9,6 +9,11 @@ use Doctrine\ORM\EntityRepository;
  */
 class InfoRepository extends EntityRepository
 {
+    /**
+     * Finds last values of sensors for each metric and room combination.
+     *
+     * @return Collection
+     */
 	public function findLastValues()
 	{
 	    return $this->getEntityManager()
@@ -20,6 +25,13 @@ class InfoRepository extends EntityRepository
 	        ->getResult();
 	}
 	
+	/**
+	 * Finds all measures for a specific metric and room.
+	 *
+	 * @param integer $metric The identifier of the metric
+	 * @param integer $room The identifier of the room
+	 * @return Collection
+	 */
 	public function findByMetricAndRoom($metric, $room)
 	{
 	    return $this->getEntityManager()

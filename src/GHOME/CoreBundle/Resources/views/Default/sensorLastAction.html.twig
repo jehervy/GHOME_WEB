@@ -1,5 +1,7 @@
-{% if row.action %}
-    <span class="label {{ row.metricEntity.actuatorCssClass(row.action.value) }}">{{ row.metricEntity.formatActuator(row.action.value) }}</span>
+{% if row.action and row.metricEntity.isActuator %}
+    <span class="label {{ row.metricEntity.actuatorCssClass(row.action.value) }}">
+        {{ row.metricEntity.formatActuator(row.action.value) }} {{row.action.value}}
+    </span>
 {% elseif row.metricEntity.isActuator %}
     <em>Aucune donnée</em>
 {% else %}

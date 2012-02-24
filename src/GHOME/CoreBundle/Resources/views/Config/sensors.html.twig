@@ -1,0 +1,48 @@
+{% extends "::private.html.twig" %}
+
+{% block content %}
+<ul class="breadcrumb">
+    <li>
+        <a href="{{ path('ghome_core_config_index') }}">Configuration</a>
+        <span class="divider">/</span>
+    </li>
+    <li class="active">
+        Capteurs
+    </li>
+</ul>
+
+<p><a href="{{ path('ghome_core_config_addsensor') }}">Ajouter un nouveau capteur</a></p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Métrique</th>
+            <th>Pièce</th>
+            <th>Identifiant physique</th>
+            <th>Opération(s)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in sensors %}
+            <td>
+                <a href="{{ path('ghome_core_default_metric', {'id': row.metric.id}) }}">
+                    {{ row.metric.name }}
+                </a>
+            </td>
+            <td>
+                <a href="{{ path('ghome_core_default_room', {'id': row.room.id}) }}">
+                    {{ row.room.name }}
+                </a>
+            </td>
+            <td>{{ row.enocean.physicalId }}</td>
+            <td>
+                <a href="{{ path('ghome_core_config_deletesensor', {'id': row.sensor.id}) }}">
+                    <i class="icon-trash"></i>
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

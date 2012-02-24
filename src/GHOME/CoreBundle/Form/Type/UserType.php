@@ -5,8 +5,14 @@ namespace GHOME\CoreBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilder;
 
+/**
+ * Type for the forms framework to handle users.
+ */
 class UserType extends AbstractType
 {
+    /**
+     * {@inheritdoc}
+     */
 	public function buildForm(FormBuilder $builder, array $options)
 	{
 	    $builder->add('username', null, array('label' => 'Nom d\'utilisateur'));
@@ -21,6 +27,9 @@ class UserType extends AbstractType
 	    ));
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getDefaultOptions(array $options)
     {
         return array(
@@ -28,6 +37,9 @@ class UserType extends AbstractType
         );
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getName()
     {
         return 'ghome_core_user';

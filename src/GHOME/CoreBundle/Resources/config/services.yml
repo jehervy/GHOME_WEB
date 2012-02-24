@@ -16,6 +16,10 @@ services:
         class: GHOME\CoreBundle\Entity\SensorManager
         arguments: [%ghome.etc_dir%, @ghome_core.metric_manager, @ghome_core.room_manager]
     
+    ghome_core.enocean_sensor_manager:
+        class: GHOME\CoreBundle\Entity\EnOceanSensorManager
+        arguments: [%ghome.etc_dir%]
+    
     ghome_core.rule_manager:
         class: GHOME\CoreBundle\Entity\RuleManager
         arguments: [%ghome.etc_dir%, @ghome_core.metric_manager]

@@ -7,9 +7,9 @@ namespace GHOME\CoreBundle\Entity;
  */
 class Sensor
 {
-    protected $id;
-    protected $metric;
-	protected $room;
+    private $id;
+    private $metric;
+	private $room;
 
     /**
      * Constructor.

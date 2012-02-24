@@ -6,6 +6,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * This is an user allowed to access to GHOME.
+ *
  * @ORM\Entity
  * @ORM\Table(name="users")
  */

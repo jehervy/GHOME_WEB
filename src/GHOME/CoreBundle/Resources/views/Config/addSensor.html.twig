@@ -1,0 +1,130 @@
+{% extends "::private.html.twig" %}
+
+{% block content %}
+<ul class="breadcrumb">
+    <li>
+        <a href="{{ path('ghome_core_config_index') }}">Configuration</a>
+        <span class="divider">/</span>
+    </li>
+    <li>
+        <a href="{{ path('ghome_core_config_sensors') }}">Capteurs</a>
+        <span class="divider">/</span>
+    </li>
+    <li class="active">
+        Ajouter un nouveau capteur
+    </li>
+</ul>
+
+<form method="post" action="">
+    <fieldset>
+        <legend>Paramètres du capteur</legend>
+        <br />
+        <label for="physical_id">Identifiant physique</label>
+        <input type="text" name="physical_id" id="physical_id" required="required" /><br />
+        
+        <label for="metric">Métrique mesurée</label>
+        <select name="metric" id="metric" required="required">
+            {% for metric in metrics %}{% if metric.isSensor %}
+            <option value="{{ metric.id }}">{{ metric.name }}</option>
+            {% endif %}{% endfor %}
+        </select>
+        
+        <label for="room">Pièce d'installation</label>
+        <select name="room" id="room" required="required">
+            {% for room in rooms %}
+            <option value="{{ room.id }}">{{ room.name }}</option>
+            {% endfor %}
+        </select>
+    </fieldset>
+    
+    <div class="row">
+        <div class="span5">
+    <fieldset>
+        <legend>Paramètres des données</legend>
+        <br />
+        <label for="valid">Masque de validation</label>
+        <input type="number" name="valid" id="valid" required="required" /><br />
+    
+        <label for="data_pos">Position des données</label>
+        <input type="number" name="data_pos" id="data_pos" required="required" /><br />
+    
+        <label for="data_length">Longueur des données</label>
+        <input type="number" name="data_length" id="data_length" required="required" />
+    </fieldset>
+        </div>
+        
+        <div class="span5">
+    <fieldset>
+        <legend>Mapping des données</legend>
+        <br />
+        <label for="data_type">Type de données</label>
+        <select name="data_type" id="data_type" required="required">
+            <option value="" selected="selected"></option>
+            {% for key, value in types %}
+            <option value="{{ key }}">{{ value }}</option>
+            {% endfor %}
+        </select><br />
+        
+        <div id="data_numeric">
+            <label for="data_min">Plage de valeurs</label>
+            <input type="number" name="data[min]" id="data_min" class="span2" />
+            à
+            <input type="number" name="data[max]" id="data_max" class="span2" />
+        </div>
+        
+        <div id="data_binary">
+            <div>
+                <input type="number" name="data[$id$][binary]" class="span2" />
+                lu correspond à 
+                <input type="number" name="data[$id$][real]" class="span2" /><br />
+            </div>
+            <a id="link_add_data" href="#">Ajouter une correspondance</a>
+        </div>
+    </fieldset>
+        </div>
+    </div>
+    
+    <div class="form-actions">
+        <input type="submit" class="btn btn-primary" value="Envoyer" />
+    </div>
+</form>
+
+{% endblock %}
+
+{% block javascripts %}
+<script type="text/javascript">
+    $('#data_numeric').hide();
+    $('#data_binary').hide();
+    
+    $('#data_type').change(function(event)
+    {
+        if ($('#data_type').val() == 'binary')
+        {
+            $('#data_numeric').hide();
+            $('#data_binary').show();
+        }
+        else if ($('#data_type').val() == 'numeric')
+        {
+            $('#data_numeric').show();
+            $('#data_binary').hide();
+        }
+        else
+        {
+            $('#data_numeric').hide();
+            $('#data_binary').hide();
+        }
+    });
+    
+    var data_prototype = $('#data_binary div').html();
+
+    $('#link_add_data').click(function(event)
+    {
+        var collectionHolder = $('#data_binary div');
+        form = data_prototype.replace(/\$id\$/g, collectionHolder.children().length);
+        collectionHolder.append(form);
+        return false;
+    });
+    
+    $('#data_binary div').html('');
+</script>
+{% endblock %}

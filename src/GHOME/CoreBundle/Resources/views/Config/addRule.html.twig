@@ -16,8 +16,8 @@
 </ul>
 
 <form method="post" action="">
-    <fieldset>
-        <table style="width: 90%;"><tbody><tr>
+    <table style="width: 90%;"><tbody>
+        <tr>
             <td style="width: 10%; vertical-align: top;">SI</td>
             
             <td style="width: 40%; vertical-align: top;">
@@ -50,12 +50,12 @@
                 </div>
                 <a id="link_add_action" href="#">Ajouter une action</a>
             </td>
-        </tr></tbody></table>
+        </tr>
+    </tbody></table>
         
-        <div class="form-actions">
-            <input type="submit" class="btn btn-primary" value="Envoyer" />
-        </div>
-    </fieldset>
+    <div class="form-actions">
+        <input type="submit" class="btn btn-primary" value="Envoyer" />
+    </div>
 </form>
 
 {% endblock %}
@@ -85,6 +85,6 @@
     {
         $('#conditions').html('');
         $('#actions').html('');
-    })
+    });
 </script>
 {% endblock %}
