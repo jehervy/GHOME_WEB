@@ -61,7 +61,7 @@
 </div>
 
 {% if infos|length > 0 or actions|length > 0 %}
-{{ pagerfanta(pager, 'twitter_bootstrap') }}
+{{ pagerfanta(pager, 'twitter_bootstrap', {routeName: 'ghome_core_default_sensor', routeParams: {roomId: room.id, metricId: metric.id}}) }}
 
 <table class="table table-striped">
     <thead>
@@ -98,7 +98,8 @@
     </tbody>
 </table>
 
-{{ pagerfanta(pager, 'twitter_bootstrap') }}
+{{ pagerfanta(pager, 'twitter_bootstrap', {routeName: 'ghome_core_default_sensor', routeParams: {roomId: room.id, metricId: metric.id}}) }}
+
 {% endif %}
 
 {% endblock %}

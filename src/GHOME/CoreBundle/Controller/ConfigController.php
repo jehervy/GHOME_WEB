@@ -251,7 +251,7 @@ class ConfigController extends Controller
     {
 		$em = $this->getDoctrine()->getEntityManager();
 		$adapter = new DoctrineORMAdapter($em->getRepository('GHOMECoreBundle:Log')->queryAllOrderedByDate());
-		$page = $request->query->has('page') ? $request->query->has('page') : 1;
+		$page = $request->query->has('page') ? $request->query->get('page') : 1;
 		
 		$pagerfanta = new Pagerfanta($adapter);
 		$pagerfanta->setMaxPerPage(15);

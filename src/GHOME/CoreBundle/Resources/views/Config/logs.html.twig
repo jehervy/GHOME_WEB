@@ -11,7 +11,7 @@
     </li>
 </ul>
 
-{{ pagerfanta(pager, 'twitter_bootstrap') }}
+{{ pagerfanta(pager, 'twitter_bootstrap', {routeName: 'ghome_core_config_logs'}) }}
 
 <table class="table table-striped">
     <thead>
@@ -37,6 +37,6 @@
     </tbody>
 </table>
 
-{{ pagerfanta(pager, 'twitter_bootstrap') }}
+{{ pagerfanta(pager, 'twitter_bootstrap', {routeName: 'ghome_core_config_logs'}) }}
 
 {% endblock %}

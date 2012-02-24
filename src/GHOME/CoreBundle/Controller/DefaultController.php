@@ -119,7 +119,7 @@ class DefaultController extends Controller
 		$actions = $em->getRepository('GHOMECoreBundle:Action')->findByMetricAndRoom($metricId, $roomId);
 		
 		$adapter = new ArrayAdapter($this->mergeInfosAndActionsByTime($infos, $actions));
-		$page = $request->query->has('page') ? $request->query->has('page') : 1;
+		$page = $request->query->has('page') ? $request->query->get('page') : 1;
 		
 		$pagerfanta = new Pagerfanta($adapter);
 		$pagerfanta->setMaxPerPage(15);
