@@ -20,6 +20,11 @@ class EnOceanSensor
 	   'numeric' => 'Numérique',
 	);
 	
+	/**
+	 * Returns types of data allowed for this sensor.
+	 *
+	 * @return array
+	 */
 	public static function getTypes()
 	{
 	    return self::$types;

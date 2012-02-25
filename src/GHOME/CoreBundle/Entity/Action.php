@@ -5,6 +5,8 @@ namespace GHOME\CoreBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * Represents an action done by an actuator.
+ *
  * @ORM\Entity(repositoryClass="GHOME\CoreBundle\Repository\ActionRepository")
  * @ORM\Table(name="actuators_commands")
  */

@@ -2,79 +2,43 @@
 
 namespace GHOME\CoreBundle\Entity;
 
-class RuleManager
+/**
+ * Manages the rules of the inference engine.
+ */
+class RuleManager extends Manager
 {
-	private $dir;
 	private $metricManager;
-	private $entities = array();
 	
+	/**
+	 * {@inheritdoc}
+	 */
 	public function __construct($dir, $metricManager)
 	{
-		$this->dir = $dir;
-		$this->metricManager = $metricManager;
-
-		$this->initialize();
+		$this->metricManager = $metricManager;		
+		parent::__construct($dir);
 	}
 	
-	public function findAll()
+	/**
+	 * {@inheritdoc}
+	 */
+	public function add($entity, $position = null)
 	{
-		return $this->entities;
-	}
-	
-	public function find($index)
-	{
-		return isset($this->entities[$index]) ? $this->entities[$index] : null;
-	}
-	
-	public function add(Rule $rule, $position = null)
-	{
-	    $rule->canonicalize();
+	    if (!$entity instanceof Rule)
+	    {
+	        throw new \InvalidArgumentException(sprintf(
+	            '$entity must be an instance of Rule (got instance of "%s")',
+	            get_class($entity)
+	        ));
+	    }
 	    
-		if (!isset($position))
-		{
-			$this->entities[] = $rule;
-		}
-		else
-		{
-			for ($i = count($this->entities) - 1; $i >= $position; $i--)
-			{
-				$this->entities[$i + 1] = $this->entities[$i];
-			}
-			$this->entities[$position] = $rule;
-		}
-		
-		$this->writeXml();
+	    $entity->canonicalize();
+	    parent::add($entity, $position);
 	}
 	
-	public function remove($position)
-	{
-	    unset($this->entities[$position]);
-	    $this->writeXml();
-	}
-	
-	private function initialize()
-	{
-		$rules = new \SimpleXMLElement(file_get_contents($this->dir.'/rules.xml'));
-		
-		foreach ($rules->rule as $rule)
-		{
-			$ruleEntity = new Rule();
-			foreach ($rule->if->metric as $metric)
-			{
-				$id = (int) $metric['id'];
-				$ruleEntity->addCondition($this->metricManager->find($id), (string) $metric['cond'], (string) $metric);
-			}
-			foreach ($rule->then->metric as $metric)
-			{
-				$id = (int) $metric['id'];
-				$ruleEntity->addAction($this->metricManager->find($id), (string) $metric);
-			}
-			
-			$this->entities[] = $ruleEntity;
-		}
-	}
-	
-	private function writeXml()
+	/**
+	 * {@inheritdoc}
+	 */
+	public function flush()
 	{
 	    $xml = '<?xml version="1.0"?>'."\n".'<rules>'."\n";
 		foreach ($this->entities as $rule)
@@ -94,5 +58,30 @@ class RuleManager
 		$xml .= '</rules>';
 		
 		file_put_contents($this->dir.'/rules.xml', $xml);
+	}
+	
+	/**
+	 * {@inheritdoc}
+	 */
+	protected function initialize()
+	{
+		$rules = new \SimpleXMLElement(file_get_contents($this->dir.'/rules.xml'));
+		
+		foreach ($rules->rule as $rule)
+		{
+			$ruleEntity = new Rule();
+			foreach ($rule->if->metric as $metric)
+			{
+				$id = (int) $metric['id'];
+				$ruleEntity->addCondition($this->metricManager->find($id), (string) $metric['cond'], (string) $metric);
+			}
+			foreach ($rule->then->metric as $metric)
+			{
+				$id = (int) $metric['id'];
+				$ruleEntity->addAction($this->metricManager->find($id), (string) $metric);
+			}
+			
+			$this->entities[] = $ruleEntity;
+		}
 	}
 }

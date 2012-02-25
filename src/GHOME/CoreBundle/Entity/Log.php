@@ -5,6 +5,8 @@ namespace GHOME\CoreBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * Log message from the server.
+ *
  * @ORM\Entity(repositoryClass="GHOME\CoreBundle\Repository\LogRepository")
  * @ORM\Table(name="system_logs")
  */

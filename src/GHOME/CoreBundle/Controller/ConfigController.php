@@ -166,7 +166,7 @@ class ConfigController extends Controller
 		if ($request->getMethod() === 'POST')
 		{
 		    $eSensor = new EnOceanSensor();
-		    $eSensor->setPhysicalId((int) $request->request->get('physical_id'));
+		    $eSensor->setPhysicalId((string) $request->request->get('physical_id'));
 		    $eSensor->setValid((int) $request->request->get('valid'));
 		    $eSensor->setDataType((string) $request->request->get('data_type'));
 		    $eSensor->setDataPos((int) $request->request->get('data_pos'));
@@ -260,6 +260,12 @@ class ConfigController extends Controller
         return array('pager' => $pagerfanta);
     }
     
+    /**
+     * Populates an array of sensors with consolidated data from EnOcean sensors.
+     *
+     * @param array $sensors Logical view of sensors
+     * @param array Merged logical and physical view of sensors
+     */
     private function mergeEnOceanSensors($sensors)
     {
         $eSensorManager = $this->get('ghome_core.enocean_sensor_manager');

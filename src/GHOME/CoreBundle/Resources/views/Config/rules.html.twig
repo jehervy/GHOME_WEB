@@ -52,7 +52,6 @@
             </td>
             <td>
                 {% for action in rule.actions %}
-                    {{ action.metric.name }} : 
                     {{ action.metric.formatActuator(action.value) }}
                     {% if not loop.last %}<br />{% endif %}
                 {% endfor %}

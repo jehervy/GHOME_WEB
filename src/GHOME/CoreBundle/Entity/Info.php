@@ -5,6 +5,8 @@ namespace GHOME\CoreBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * Represents a measure done by a sensor.
+ *
  * @ORM\Entity(repositoryClass="GHOME\CoreBundle\Repository\InfoRepository")
  * @ORM\Table(name="sensors_values")
  */

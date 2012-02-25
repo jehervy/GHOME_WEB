@@ -47,6 +47,17 @@ class SocketClient
     }
     
     /**
+     * Sends an order to the server to reboot (to reload the configuration 
+     * for example).
+     */
+    public function sendReboot()
+    {
+        $this->connect();
+        
+		fwrite($this->fd, '4');
+    }
+    
+    /**
      * Establishes a connection with the server through sockets.
      */
     private function connect()

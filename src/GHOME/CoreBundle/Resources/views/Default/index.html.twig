@@ -21,7 +21,7 @@
     {% for row in data %}
         <tr>
             <td>
-                <a href="{{ path('ghome_core_default_sensor', {'metricId': row.metricEntity.id, 'roomId': row.roomEntity.id}) }}" class="btn">+</a>
+                <a href="{{ path('ghome_core_default_sensor', {'metricId': row.metricEntity.id, 'roomId': row.roomEntity.id}) }}" class="btn btn-primary">+</a>
             </td>
             <td>
                 <a href="{{ path('ghome_core_default_metric', {'id': row.metricEntity.id}) }}">

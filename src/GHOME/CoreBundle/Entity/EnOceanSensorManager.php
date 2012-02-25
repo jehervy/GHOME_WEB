@@ -2,94 +2,39 @@
 
 namespace GHOME\CoreBundle\Entity;
 
-class EnOceanSensorManager
+/**
+ * Manages the physical view of the EnOcean sensors.
+ */
+class EnOceanSensorManager extends Manager
 {
-	private $dir;
 	private $address;
 	private $port;
-	private $entities = array();
 	
-	public function __construct($dir)
+	/**
+	 * {@inheritdoc}
+	 */
+	public function add($entity, $position = null)
 	{
-		$this->dir = $dir;		
-		$this->initialize();
-	}
-	
-	public function findAll()
-	{
-		return $this->entities;
-	}
-	
-	public function find($index)
-	{
-		return isset($this->entities[$index]) ? $this->entities[$index] : null;
-	}
-	
-	public function add(EnOceanSensor $sensor, $position = null)
-	{
-	    if (!$sensor->getVirtualId())
+	    if (!$entity instanceof EnOceanSensor)
 	    {
-	        $sensor->setVirtualId(count($this->entities) + 1);
+	        throw new \InvalidArgumentException(sprintf(
+	            '$entity must be an instance of EnOceanSensor (got instance of "%s")',
+	            get_class($entity)
+	        ));
 	    }
 	    
-		if (!isset($position))
-		{
-			$this->entities[] = $sensor;
-		}
-		else
-		{
-			for ($i = count($this->entities) - 1; $i >= $position; $i--)
-			{
-				$this->entities[$i + 1] = $this->entities[$i];
-			}
-			$this->entities[$position] = $sensor;
-		}
-		
-		$this->writeXml();
+	    if (!$entity->getVirtualId())
+	    {
+	        $entity->setVirtualId(count($this->entities) + 1);
+	    }
+	    
+	    parent::add($entity, $position);
 	}
 	
-	public function remove($position)
-	{
-	    unset($this->entities[$position]);
-	    $this->writeXml();
-	}
-	
-	protected function initialize()
-	{
-		$sensors = new \SimpleXMLElement(file_get_contents($this->dir.'/enOceanSensorsId.xml'));
-		
-		$this->address = (string) $sensors['address'];
-		$this->port = (int) $sensors['port'];
-		
-		foreach ($sensors->sensor as $sensor)
-		{
-			$s = new EnOceanSensor();
-			
-			$s->setVirtualId((int) $sensor->virtualId);
-			$s->setPhysicalId((int) $sensor->physicalId);
-			$s->setValid((int) $sensor->valid);
-			$s->setDataType((string) $sensor->data['type']);
-			$s->setDataPos((int) $sensor->data['pos']);
-			$s->setDataLength((int) $sensor->data['length']);
-			
-			if ($s->getDataType() === 'numeric')
-			{
-			    $s->setDataMin((int) ((string) $sensor->data->min));
-    			$s->setDataMax((int) ((string) $sensor->data->max));
-			}
-			elseif ($s->getDataType() === 'binary')
-			{
-			    foreach ($sensor->data as $data)
-    			{
-    			    $s->addDataValue((int) $data['data'], (int) ((string) $data));
-    			}
-			}
-			
-			$this->entities[$s->getVirtualId()] = $s;
-		}
-	}
-	
-	private function writeXml()
+	/**
+	 * {@inheritdoc}
+	 */
+	public function flush()
 	{
 	    $xml = '<?xml version="1.0"?>'."\n".'<sensors address="'.$this->address.'" port="'.$this->port.'">'."\n";
 		foreach ($this->entities as $sensor)
@@ -117,5 +62,43 @@ class EnOceanSensorManager
 		$xml .= '</sensors>';
 		
 		file_put_contents($this->dir.'/enOceanSensorsId.xml', $xml);
+	}
+	
+	/**
+	 * {@inheritdoc}
+	 */
+	protected function initialize()
+	{
+		$sensors = new \SimpleXMLElement(file_get_contents($this->dir.'/enOceanSensorsId.xml'));
+		
+		$this->address = (string) $sensors['address'];
+		$this->port = (int) $sensors['port'];
+		
+		foreach ($sensors->sensor as $sensor)
+		{
+			$s = new EnOceanSensor();
+			
+			$s->setVirtualId((int) $sensor->virtualId);
+			$s->setPhysicalId((string) $sensor->physicalId);
+			$s->setValid((int) $sensor->valid);
+			$s->setDataType((string) $sensor->data['type']);
+			$s->setDataPos((int) $sensor->data['pos']);
+			$s->setDataLength((int) $sensor->data['length']);
+			
+			if ($s->getDataType() === 'numeric')
+			{
+			    $s->setDataMin((int) ((string) $sensor->data->min));
+    			$s->setDataMax((int) ((string) $sensor->data->max));
+			}
+			elseif ($s->getDataType() === 'binary')
+			{
+			    foreach ($sensor->data as $data)
+    			{
+    			    $s->addDataValue((int) $data['data'], (int) ((string) $data));
+    			}
+			}
+			
+			$this->entities[$s->getVirtualId()] = $s;
+		}
 	}
 }
