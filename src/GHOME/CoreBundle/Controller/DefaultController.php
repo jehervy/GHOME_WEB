@@ -53,7 +53,7 @@ class DefaultController extends Controller
 		$infos = $em->getRepository('GHOMECoreBundle:Info')->findByMetric($id);
 		$actions = $em->getRepository('GHOMECoreBundle:Action')->findByMetric($id);
 		
-		$data = $this->mergeInfosAndActionsBySensor($infos, $actions);
+		$data = $this->mergeInfosAndActionsBySensor($infos, $actions, array('metric' => $id));
 		
         return array('metric' => $metric, 'data' => $data);
 	}
@@ -75,7 +75,7 @@ class DefaultController extends Controller
 		$infos = $em->getRepository('GHOMECoreBundle:Info')->findByRoom($id);
 		$actions = $em->getRepository('GHOMECoreBundle:Action')->findByRoom($id);
 		
-		$data = $this->mergeInfosAndActionsBySensor($infos, $actions);
+		$data = $this->mergeInfosAndActionsBySensor($infos, $actions, array('room' => $id));
 		
 		return array('room' => $room, 'data' => $data);
 	}
@@ -220,9 +220,10 @@ class DefaultController extends Controller
 	 * 
 	 * @param array|Collection $infos Data from sensors
 	 * @param array|Collection $actions Data from actuators
+	 * @param array $filter Filters to apply on metric and/or room
 	 * @return array
 	 */
-	private function mergeInfosAndActionsBySensor($infos, $actions)
+	private function mergeInfosAndActionsBySensor($infos, $actions, array $filter = array())
 	{
 	    $metricManager = $this->get('ghome_core.metric_manager');
 	    $roomManager = $this->get('ghome_core.room_manager');
@@ -260,7 +261,11 @@ class DefaultController extends Controller
 	    //Adds all remaining sensors with no data.
 	    foreach ($sensorManager->findAll() as $sensor)
 	    {
-	        if (!isset($data[$sensor->getMetric()->getId()][$sensor->getRoom()->getId()]))
+	        if (
+	            !isset($data[$sensor->getMetric()->getId()][$sensor->getRoom()->getId()]) 
+	            && (empty($filter['metric']) || $filter['metric'] == $sensor->getMetric()->getId())
+	            && (empty($filter['room']) || $filter['room'] == $sensor->getRoom()->getId())
+	        )
 	        {
 	            $data[$sensor->getMetric()->getId()][$sensor->getRoom()->getId()] = array();
 	        }
